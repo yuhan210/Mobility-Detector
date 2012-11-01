@@ -1,0 +1,8 @@
+#Wifi,0,1000
+#GPS,0,1000
+#GSM,0,1000
+#Accel,0,3
+#Compass,0,3
+#Orientation,0,3
+#NW Loc,0,1000
+#GYRO,0,3
