@@ -10,6 +10,7 @@ groundTruth:
 Data format: 
 
 GPS:
+
 phoneID, Timestamp, GPS, GPSStatusCode|time from the satellite|lat|lon|altitude|accuracy|speed|bearing(heading)|groundTruth
 
 example:
@@ -17,6 +18,7 @@ example:
 
 
 WiFi:
+
 phoneID, Timestamp, WiFi, WiFiState| current connected WiFi SSID| current connected WiFi BSSID | connected WiFi RSSI | number of neighboring wifi APs | groundTruth | SSID | BSSID | RSSI (level) | frequency| ....
 
 example:
@@ -24,12 +26,14 @@ example:
 
 
 Accel:
+
 phoneID, Timestamp, Accel, x | y | z| gt
 
 example:
 354957034256753,1342574445197.6473,Accel,-0.7627395|4.944186|7.8861814|0
 
 GSM:
+
 phoneID, Timestamp, GSM,  connected Cell ID| connected Cell LAC | connected Cell RSSI | connected network type | connected data state| groundTruth | number of neighboring cell towers | Cell ID | LAC | Rssi
 
 example:
