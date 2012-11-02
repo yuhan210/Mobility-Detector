@@ -16,6 +16,7 @@ phoneID, Timestamp, GPS, GPSStatusCode|time from the satellite|lat|lon|altitude|
 
 example:
 354957034256753,1343956473110.2941,GPS,2|1343956473000|37.3739755153656|-121.99373245239258|-31.0|6.0|0.0|0.0|4  					
+
 ---
 
 
