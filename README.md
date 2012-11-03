@@ -40,10 +40,20 @@ example:
 
 GSM:
 
-phoneID, Timestamp, GSM,  connected Cell ID| connected Cell LAC | connected Cell RSSI | connected network type | connected data state| groundTruth | number of neighboring cell towers | Cell ID | LAC | Rssi
+** Note!
+There are two formats in the collected data
+
+New version - data collected after May, 2012
+phoneID, Timestamp, GSM,  serving Cell ID| serving Cell LAC | serving Cell RSSI | serving network type | data state| groundTruth | number of neighboring cell towers | Cell ID | LAC | Rssi
 
 example:
 354957034256753,1342539419312.56,GSM,35463|6037|6|2|0|4|4|35464|6037|9|35466|6037|8|1235|6037|7|35461|6037|5
+
+Old Version - all of Tiffany's data collected before May, 2012
+phoneID, Timestamp, GSM, serving Cell ID| serving Cell LAC | serving Cell RSSI | serving network type | data state| groundTruth | number of neighboring cell tower | Cell ID | Rssi
+
+example:
+355066049626536,1332202806532.5310,GSM,22181|6011|23|2|0|0|4|20561|14|20352|13|21511|16|22187|12
 
 ---
 
