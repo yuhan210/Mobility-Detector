@@ -91,7 +91,7 @@ public class gpsTraining {
 					
 					for(int sensorIndex = 0; sensorIndex < sensorFileList.length; ++sensorIndex){ // find GPS file in a trace
 						
-						if(sensorFileList[sensorIndex].getName().indexOf("GPS2012") == 0){
+						if(sensorFileList[sensorIndex].getName().indexOf("GPS") == 0){
 							String inFileName = tracePath + "/" + sensorFileList[sensorIndex].getName();
 							
 							FileInputStream fstream = new FileInputStream(inFileName);
@@ -174,6 +174,7 @@ public class gpsTraining {
 		//downsampling...
 		location l[] = new location[NN];
 		int downSamplingCounter = 0;
+		l[downSamplingCounter++] = rawGPSTrace[0];
 		int prevIndex = 0;
 		for(int i = 1; i < NN; ++i){
 			int downsampleIndex = i;
