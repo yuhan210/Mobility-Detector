@@ -28,7 +28,7 @@ public class accelTrain {
 	public static FileWriter testStream;
 	public static BufferedWriter testOut;
 
-	public static final String PATHTORAWDATA = "C:\\Users\\yuhan\\Dropbox\\CITA_DATA";
+	public static final String PATHTORAWDATA = "/home/anirudh/cita/CITA_DATA";
 	public static void main(String args[]){
 
 		try{
@@ -80,7 +80,14 @@ public class accelTrain {
 							AccelElement accelList[] = new AccelElement[1000000];
 							while((strLine = br.readLine())!= null){
 								String header[] = strLine.split(",");
-								String payload[] = header[3].split("\\|");
+                                                                String payload[] =null;
+                                                                try {
+								  payload = header[3].split("\\|");
+                                                                }
+                                                                catch (Exception e) {
+                                                                   System.err.println("Out of bounds, continue .. \n");
+                                                                   continue;
+                                                                } 
 
 								if(prevGroundTruth != groundTruth && Integer.parseInt(payload[3]) == groundTruth){ // transition detected
 									counter = 0;
@@ -93,16 +100,22 @@ public class accelTrain {
 										String innerHeader[] = strLine.split(",");
 										String innerPayload[] = innerHeader[3].split("\\|");
 
-										if(Integer.parseInt(innerPayload[3]) == groundTruth){
-											timeStamp = Long.parseLong(innerHeader[1].substring(0,13));
-											accelList[counter++] = new AccelElement(timeStamp, Double.parseDouble(innerPayload[0]), Double.parseDouble(innerPayload[1]), Double.parseDouble(innerPayload[2]));
+                                                                                try {
+									        	if(Integer.parseInt(innerPayload[3]) == groundTruth){
+									        		timeStamp = Long.parseLong(innerHeader[1].substring(0,13));
+									        		accelList[counter++] = new AccelElement(timeStamp, Double.parseDouble(innerPayload[0]), Double.parseDouble(innerPayload[1]), Double.parseDouble(innerPayload[2]));
 
-										}else{// stop, we found a trace with the labelled groundtruth, extract feature
-											processAccelList(accelList, counter, groundTruth); 
-											initAccelList(accelList); // clean the array to find the next trace
-											prevGroundTruth = Integer.parseInt(innerPayload[3]);
-											break;
-										}
+									        	}else{// stop, we found a trace with the labelled groundtruth, extract feature
+									        		processAccelList(accelList, counter, groundTruth); 
+									        		initAccelList(accelList); // clean the array to find the next trace
+									        		prevGroundTruth = Integer.parseInt(innerPayload[3]);
+									        		break;
+									        	}
+                                                                                }
+                                                                                catch (Exception e) {
+                                                                                    System.err.println("Some exception, continuing to next line \n"); 
+                                                                                    continue;
+                                                                                }
 									}
 									if(strLine == null){ // found a trace
 										processAccelList(accelList, counter, groundTruth);	
@@ -127,6 +140,7 @@ public class accelTrain {
 
 		}catch(Exception e)
 		{
+                        e.printStackTrace();
 			System.err.println("ERROR: "+ e.getMessage() + " "+ e);
 		}
 	}
@@ -177,7 +191,15 @@ public class accelTrain {
 				
 
 				//**** Feature 3: Peak Power Frequency (freq domain) ****//
-				double currentWindowFs = N/ ((accelWindow[N-1].timeStamp - accelWindow[0].timeStamp)/1000); // sampling frequency
+                                double currentWindowFs=0;
+                                try {
+                                  currentWindowFs = N/ ((accelWindow[N-1].timeStamp - accelWindow[0].timeStamp)/1000); // sampling frequency
+                                } 
+                                catch (Exception e) {
+                                   System.err.println(e.getMessage());
+                                   System.err.println("Ignoring sample due to divide by zero ... \n");
+                                   continue;
+                                }
 				double currentWindowFFT[] = new double[((N/2) + 1)];   
 				computeDFT(accelWindow, N, currentWindowFFT);
 				
