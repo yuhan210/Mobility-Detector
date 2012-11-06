@@ -18,7 +18,7 @@ public class gsmTraining {
 	public static int WINDOW_SIZE = 5;// number 
 	public static int SHIFT_INTERVAL = 10 * 1000; //ms
 
-	public static int[] samplingIntervalOption = {10};
+	public static int[] samplingIntervalOption = {1};
 	public static int samplingIntervalIndex = 0;
 
 
@@ -29,7 +29,8 @@ public class gsmTraining {
 	public static FileWriter[] fileWriterTestArr;
 	public static BufferedWriter[] bufWriterTestArr;
 
-	public static final String PATHTORAWDATA = "C:\\Users\\yuhan\\Dropbox\\CITA_DATA";
+	//public static final String PATHTORAWDATA = "C:\\Users\\yuhan\\Dropbox\\CITA_DATA";
+	public static final String PATHTORAWDATA = "C:\\Users\\yuhan\\Dropbox\\test";
 	public static void main(String args[]){
 
 		try{
@@ -55,6 +56,7 @@ public class gsmTraining {
 
 			for(samplingIntervalIndex = 0; samplingIntervalIndex < samplingIntervalOption.length; ++samplingIntervalIndex){
 
+				System.err.println("++++++ sampling interval: " + samplingIntervalOption[samplingIntervalIndex] + " sec(s) ++++++");
 				File rawDataPath = new File(PATHTORAWDATA);
 				File[] userDirList = rawDataPath.listFiles(); 
 				for(int userIndex = 0; userIndex < userDirList.length; ++userIndex){// for each user's directory
@@ -221,30 +223,40 @@ public class gsmTraining {
 				/* extract features */
 				/* Feature 1: average common number of cell towers */
 				/* Feature 2: average rssi difference */
-				double aveCommonCellNumber = 0.0;
+				double aveCommonCellNumberRatio = 0.0;
 				double aveRssiDifference = 0.0;
-
+				double aveTanimotoDistance = 0.0;
 				if(totalNumInWindow > 1){
-					for(int j = 1; j < totalNumInWindow; ++j){	
-						aveCommonCellNumber += sameCellnum(currentCellList[j-1], currentCellList[j]);	
-						aveRssiDifference += calDistance(currentCellList[j-1], currentCellList[j]);
+					for(int j = 1; j < totalNumInWindow; ++j){
+						
+						int unionNum = unionCellNum(currentCellList[j-1], currentCellList[j]);	
+						if(unionNum == 0){
+							aveCommonCellNumberRatio += 0;
+						}else{
+							aveCommonCellNumberRatio += (sameCellnum(currentCellList[j-1], currentCellList[j])/ (double) unionNum);	
+						}
+						aveTanimotoDistance += TanimotoDistance(currentCellList[j-1], currentCellList[j]);
+
+						aveRssiDifference += calDistance(currentCellList[j-1], currentCellList[j])/(double) unionNum;
 					}
-					aveCommonCellNumber /= (totalNumInWindow - 1) * 1.0;
+					aveCommonCellNumberRatio /= (totalNumInWindow - 1) * 1.0;
 					aveRssiDifference /= (totalNumInWindow - 1) * 1.0;
+					aveTanimotoDistance /= (totalNumInWindow - 1) * 1.0;
 				}	
 
-				/* Feature 3 */
+				/* Feature 4: Tanimoto difference between the 1st and last fingerprint in the time window */
+				double firstLastDifference = TanimotoDistance(currentCellList[0] , currentCellList[totalNumInWindow-1]);
 
 
 				try{
 
 					Random r = new Random();
-					String outFeature = aveCommonCellNumber +","+ aveRssiDifference + ","+ groundTruth+"\n";
+					String outFeature = aveCommonCellNumberRatio +","+ aveRssiDifference + ","+ aveTanimotoDistance + "," + firstLastDifference + "," + groundTruth+"\n";
 					//System.out.println(outFeature);
 					if(r.nextInt() > 0.5){//training feature
-						bufWriterTrainArr[0].write(outFeature);
+						bufWriterTrainArr[samplingIntervalIndex].write(outFeature);
 					}else{ //test feature
-						bufWriterTestArr[0].write(outFeature);
+						bufWriterTestArr[samplingIntervalIndex].write(outFeature);
 					}
 
 
@@ -298,18 +310,10 @@ public class gsmTraining {
 		return result;
 
 	}
-
 	public static void initCellList(CellList[] l){
 		for(int i = 0; i < l.length; ++i){
 			l[i] = null;
 		}
-	}
-	public static double gaussianProbability(double x, double mu, double sigma){
-		double p1 = ((x - mu)/sigma) * ((x - mu)/sigma);
-		double p2 = Math.exp(-1 * (0.5) *p1);
-		double p3 = 1 / (sigma * Math.sqrt(2 * Math.PI));
-		return (p3 * p2);
-
 	}
 	public static double calMean(ArrayList<Double> l){
 		double ave = 0;
@@ -339,6 +343,29 @@ public class gsmTraining {
 		return Math.sqrt(sum);
 
 	}
+	public static double TanimotoDistance(CellList a, CellList b){
+		
+		double aLength = 0.0;
+		double bLength = 0.0;
+		double dotValue = 0.0;
+		for(int i = 0; i < a.gsmList.size(); ++i){
+			aLength += a.gsmList.get(i).rssi * a.gsmList.get(i).rssi; 
+
+			for(int j = 0; j < b.gsmList.size(); ++j){
+				
+				bLength += b.gsmList.get(j).rssi * b.gsmList.get(j).rssi;
+
+				if(a.gsmList.get(i).cellId == b.gsmList.get(j).cellId){
+					dotValue += a.gsmList.get(i).rssi * b.gsmList.get(j).rssi;	
+				}
+			}
+		}
+		
+		return dotValue == 0 ? 0 : (dotValue/(aLength + bLength - dotValue));
+	}
+
+
+
 	public static double calDistance(CellList a, CellList b){
 
 
@@ -347,7 +374,6 @@ public class gsmTraining {
 		int counter = 0;
 		double distance = 0;
 		for(int i = 0; i < a.gsmList.size(); ++i){
-
 			for(int j = 0; j < b.gsmList.size(); ++j){
 
 				if(a.gsmList.get(i).cellId == b.gsmList.get(j).cellId){
@@ -417,7 +443,7 @@ public class gsmTraining {
 
 		return counter;
 	}
-	public static int unionNum(CellList a, CellList b){
+	public static int unionCellNum(CellList a, CellList b){
 		int intersect = sameCellnum(a, b);
 		return (a.gsmList.size()+b.gsmList.size()-intersect);
 	}
