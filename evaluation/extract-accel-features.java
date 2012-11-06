@@ -28,7 +28,7 @@ public class accelTrain {
 	public static FileWriter testStream;
 	public static BufferedWriter testOut;
 
-	public static final String PATHTORAWDATA = "/home/anirudh/cita/CITA_DATA";
+	public static final String PATHTORAWDATA = "/tmp/CITA_tmp";
 	public static void main(String args[]){
 
 		try{
