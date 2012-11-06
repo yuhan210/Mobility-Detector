@@ -1,0 +1,103 @@
+Nov 6th :
+
+Run some experiments to decide on the best detector combination.
+
+All the experiments below are on Decision Tree
+
+Experiment 1 :
+=========================
+Accel, train and test on only Chern's data. 
+
+2 fold cross validation gives 95% plus accuracy on everything except driving (there is no driving data there) using Decision Tree. 
+
+Experiment 2:
+=====================================
+Try reducing the dimensionality of the  data. 
+Simply retaining peak frequency gives worse results : 
+
+0.85 or so on everything. 
+
+Experiment 3 :
+==========================
+
+Using first three components : time domain mean and variance and frequency domain argmax seems to be giving pretty reasonable results ( > 90 %)
+
+Experiment 4:
+==============================
+Using 4 components, i.e. the first 4 seems to give results almost the same as using all the 10 components. So there is definitely some benefit to using PCA style methods to figure out what the important components are. 
+
+Other questions:
+====================================
+
+0.Find the minimum feature vector size.
+
+Ans : Right now the answer is 4. We 'll see if we can improve on that. 
+ 
+1-Train on one piece of data and test on some other user's data. 
+
+Solution : Do this using one guy's data as "train" and the other guy's data as "test"
+
+Cross training :
+
+Tiffany's data vs Chern's data : The only common subset is walking, biking, and static
+
+Ans : 
+0.8420    0.8375       NaN    0.3032       NaN
+ with all 10 feature vectors  
+
+This is terrible, and the biggest issue is distinguishing biking. Basically one person's biking (test data) isn't similar to the other person's biking (train data). I suspect we ll see the same thing with running. Static and Driving are easiest, followed by walking since they generalize to a lot of people.
+
+
+Another experiment :
+
+Anirudh biking and walking vs Chern biking and walking :
+
+NaN 0.6417 NaN 0.15 NaN
+
+This is really really bad. It means it's almost impossible to say if someone is biking based on training data from someone else. 
+
+First order conclusion : Using accelerometer, it's kind of impossible to train based on someone's data and predict on someone else's data. 
+
+Solution ideas :
+======================================
+If we assume we can't interact with the indoor outdoor detector, then we have the following :
+-------------------------------------
+
+Static : Accelerometer. 
+Walking : GPS , GSM , WiFi, Accelerometer
+Running : GPS , GSM , WiFi, Accelerometer
+Biking :  GPS , GSM , WiFi, Accelerometer
+Driving : GSM/GPS. 
+
+We can't interact with the indoor/outdoor detector because that breaks our composition / detection abstraction. 
+
+Experiment 5 (Individual training, what if we predict the state of each user simply based on his or her own data) :
+=========================================
+
+Tiffany :
+
+ 0.9462    0.9470       NaN    0.8933    0.9549
+
+Anirudh :
+
+ NaN    0.9021       NaN    0.9085       NaN
+
+Somak :
+
+0.9962    0.9771       NaN       NaN       NaN 
+
+Chern : 
+
+ 0.9924    0.9534    0.9885    0.9949       NaN
+
+Ernie : 
+ 
+NaN    0.9712       NaN       NaN    0.9871
+
+When the accelerometer is on at full sampling rate, we can predict each user's activity based on his own data. Predicting based on someone else's data yields very bad results. 
+
+Other things to do :
+=========================================
+
+2-Subsample data and see where that gets you. This is the energy vs accuracy tradeoff. 
+3-Combine or fuse sensor predictions.
