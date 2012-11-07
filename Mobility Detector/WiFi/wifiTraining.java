@@ -32,7 +32,7 @@ public class wifiTraining {
 	public static int[] samplingIntervalOption = {1,10};
 	public static int samplingIntervalIndex = 0;
 
-	public static final String PATHTORAWDATA = "C:\\Users\\yuhan\\Dropbox\\CITA_DATA";	
+	public static final String PATHTORAWDATA = "/tmp/CITA_DATA";	
 //	public static final String PATHTORAWDATA = "C:\\Users\\yuhan\\Dropbox\\test";
 	public static void main(String args[]){
 
@@ -96,33 +96,52 @@ public class wifiTraining {
 									String header[] = strLine.split(",");
 									String payload[] = strLine.split("\\|");
 
-									if(prevGroundTruth != groundTruth && Integer.parseInt(payload[5]) == groundTruth){ // transition detected
-										counter = 0;
-										long timeStamp = Long.parseLong(header[1].substring(0,13)); //ms
-										wifiAPList[counter++] = new WiFiAPList(timeStamp,strLine);
+                                                                        try {
+									    if(prevGroundTruth != groundTruth && Integer.parseInt(payload[5]) == groundTruth){ // transition detected
+									    	counter = 0;
+									    	long timeStamp = Long.parseLong(header[1].substring(0,13)); //ms
+									    	wifiAPList[counter++] = new WiFiAPList(timeStamp,strLine);
 
-										// Read all the scans with the correct gt
-										while((strLine = br.readLine())!= null){
-											String innerHeader[] = strLine.split(",");
-											String innerPayload[] = strLine.split("\\|");
-											if(Integer.parseInt(innerPayload[5]) == groundTruth){
-												timeStamp = Long.parseLong(innerHeader[1].substring(0,13));
-												wifiAPList[counter++] = new WiFiAPList(timeStamp, strLine);
+									    	// Read all the scans with the correct gt
+									    	while((strLine = br.readLine())!= null){
+									    		String innerHeader[] = strLine.split(",");
+									    		String innerPayload[] = strLine.split("\\|");
 
-											}else{// stop
-												processAPList(wifiAPList, counter, groundTruth);
-												initAPList(wifiAPList);
-												prevGroundTruth = Integer.parseInt(innerPayload[5]);
-												break;
-											}
-										}
-										if(strLine == null){
-											processAPList(wifiAPList, counter, groundTruth);	
-										}
+                                                                                               try {
+                                                                                                   if(Integer.parseInt(innerPayload[5]) == groundTruth){
+                                                                                               	timeStamp = Long.parseLong(innerHeader[1].substring(0,13));
+                                                                                               	try  { 								
+                                                                                                         wifiAPList[counter++] = new WiFiAPList(timeStamp, strLine);
+                                                                                                       }
+                                                                                                       catch (Exception e) {
+                                                                                                         System.out.println("Array out of bounds .. continuing \n");
+                                                                                                         continue;
+                                                                                                       }
+                                                                                                   }  
+                                                                                                   else{// stop
+                                                                                                     processAPList(wifiAPList, counter, groundTruth);
+                                                                                               	 initAPList(wifiAPList);
+                                                                                               	 prevGroundTruth = Integer.parseInt(innerPayload[5]);
+                                                                                               	 break;
+                                                                                                   }
+                                                                                               }
+                                                                                               catch (Exception e) {
+                                                                                                    System.err.println("Exception in if, continuing .. \n");
+                                                                                                    continue;
+                                                                                               }
+        								    		}
+									    	if(strLine == null){
+									    		processAPList(wifiAPList, counter, groundTruth);	
+									    	}
 
-									}else{
-										prevGroundTruth = Integer.parseInt(payload[5]);
-									}
+									    }else{
+									    	prevGroundTruth = Integer.parseInt(payload[5]);
+									    }
+                                                                        }
+                                                                        catch (Exception e) {
+                                                                             System.err.println("Yet another array out of bounds error, ignore \n");
+                                                                             continue;
+                                                                        }
 
 								}//end of while
 							}// end of finding WiFi file
@@ -142,7 +161,8 @@ public class wifiTraining {
 
 		}catch(Exception e)
 		{
-			System.err.println("ERROR: "+ e.getMessage() + " "+ e);
+		   e.printStackTrace();	
+                   System.err.println("ERROR: "+ e.getMessage() + " "+ e);
 		}
 	}
 	public static int getGroundtruthFromFileName(String f){
@@ -167,17 +187,23 @@ public class wifiTraining {
 		for(int i = 1 ; i < N; ++i){
 
 			int downsampleIndex = i;
-			if((rawFPList[i].timeStamp - rawFPList[prevIndex].timeStamp) > (samplingIntervalOption[samplingIntervalIndex] * 1000)){
-				long targetTime = rawFPList[prevIndex].timeStamp + samplingIntervalOption[samplingIntervalIndex] * 1000;
-				if(Math.abs(rawFPList[i].timeStamp - targetTime) > Math.abs(rawFPList[i-1].timeStamp - targetTime)){
-					if( (i-1) != prevIndex){
-						downsampleIndex = (i-1);
-					}
-				}
+                        try {
+	  	       	  if((rawFPList[i].timeStamp - rawFPList[prevIndex].timeStamp) > (samplingIntervalOption[samplingIntervalIndex] * 1000)){
+	  	       	  	long targetTime = rawFPList[prevIndex].timeStamp + samplingIntervalOption[samplingIntervalIndex] * 1000;
+	  	       	  	if(Math.abs(rawFPList[i].timeStamp - targetTime) > Math.abs(rawFPList[i-1].timeStamp - targetTime)){
+	  	       	  		if( (i-1) != prevIndex){
+	  	       	  			downsampleIndex = (i-1);
+	  	       	  		}
+	  	       	  	}
 
-				l[downSamplingCounter++] = rawFPList[downsampleIndex];		
-				prevIndex = downsampleIndex;
-			}
+	  	       	  	l[downSamplingCounter++] = rawFPList[downsampleIndex];		
+	  	       	  	prevIndex = downsampleIndex;
+	  	       	  }
+                        }
+                        catch (Exception e) {
+                           System.err.println("Continuing ... some weird error \n");
+                           continue;
+                        }
 
 		}
 		n = downSamplingCounter;
