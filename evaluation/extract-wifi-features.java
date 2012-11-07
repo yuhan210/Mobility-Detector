@@ -13,8 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.Set;
+import java.lang.Integer;
 
-public class wifiTraining {
+/**
+ *  Take the trace file name and interested ground truth as input and generate feature vectors. 
+ **/
+class extractWifiFeatures {
 
 	public static final String[] activity = {"static","walking","running","biking","driving"};
 	public static final int[] gt = {0,1,2,3,4};
@@ -22,12 +26,9 @@ public class wifiTraining {
 	public static int TIMEWINDOW_INTERVAL = 60 * 1000; //ms
 	public static int SHIFT_INTERVAL = 10 * 1000; //ms
 
-	public static String[] trainFileNames;
-	public static String[] testFileNames;
-	public static FileWriter[] fileWriterTrainArr;
-	public static BufferedWriter[] bufWriterTrainArr;
-	public static FileWriter[] fileWriterTestArr;
-	public static BufferedWriter[] bufWriterTestArr;
+	public static String[] outFileNames;
+	public static FileWriter[] fileWriterOutArr;
+	public static BufferedWriter[] bufWriterOutArr;
 
 	public static int[] samplingIntervalOption = {1,10};
 	public static int samplingIntervalIndex = 0;
@@ -37,52 +38,30 @@ public class wifiTraining {
 	public static void main(String args[]){
 
 		try{
+			if ( args.length < 2 ) {
+				System.out.println("Usage : java extractWifiTrain trace-file ground-truth");
+				System.exit(-1);
+			}
+
 			// init feature output files //
 			int samplingIntervalOptionNum = samplingIntervalOption.length;
-			trainFileNames = new String[samplingIntervalOptionNum];
-			fileWriterTrainArr = new FileWriter[samplingIntervalOptionNum];
-			bufWriterTrainArr = new BufferedWriter[samplingIntervalOptionNum];
+			outFileNames = new String[samplingIntervalOptionNum];
+			fileWriterOutArr = new FileWriter[samplingIntervalOptionNum];
+			bufWriterOutArr = new BufferedWriter[samplingIntervalOptionNum];
 
-			testFileNames = new String[samplingIntervalOptionNum];
-			fileWriterTestArr = new FileWriter[samplingIntervalOptionNum];
-			bufWriterTestArr = new BufferedWriter[samplingIntervalOptionNum];
 			for(int i = 0; i < samplingIntervalOptionNum ; ++i){
-				trainFileNames[i] = "train_" + samplingIntervalOption[i];
-				testFileNames[i] = "test_" + samplingIntervalOption[i];
-				fileWriterTrainArr[i] = new FileWriter(trainFileNames[i]);
-				fileWriterTestArr[i] = new FileWriter(testFileNames[i]);
-				bufWriterTrainArr[i] = new BufferedWriter(fileWriterTrainArr[i]);
-				bufWriterTestArr[i] = new BufferedWriter(fileWriterTestArr[i]);
+				outFileNames[i] = "out_" + samplingIntervalOption[i];
+				fileWriterOutArr[i] = new FileWriter(outFileNames[i]);
+				bufWriterOutArr[i] = new BufferedWriter(fileWriterOutArr[i]);
 			}
 			// end of init//
 
 			for(samplingIntervalIndex = 0; samplingIntervalIndex < samplingIntervalOption.length; ++samplingIntervalIndex){
+				String inFileName=args[0];
+				System.out.println("in file is "+inFileName);
+				int groundTruth=Integer.parseInt(args[1]);
+
 				System.err.println("\n+++++++ sampling interval: " + samplingIntervalOption[samplingIntervalIndex] + "sec(s) +++++++");
-				File rawDataPath = new File(PATHTORAWDATA);
-				File[] userDirList = rawDataPath.listFiles(); 
-				for(int userIndex = 0; userIndex < userDirList.length; ++userIndex){// for each user's directory
-					
-					String userPath = PATHTORAWDATA + "/" + userDirList[userIndex].getName();
-					if(userPath.indexOf(".") >= 0) continue;
-					File userDir = new File(userPath);
-					File[] traceList = userDir.listFiles();
-					for(int traceIndex = 0; traceIndex < traceList.length; ++traceIndex){// for each trace in a user's dir
-						// check ground truth
-						String tracePath = userPath + "/" + traceList[traceIndex].getName(); 
-						int groundTruth = getGroundtruthFromFileName(traceList[traceIndex].getName());
-						System.err.println(tracePath + ", " + activity[groundTruth]);
-						if(groundTruth < 0){
-							System.err.println("Trace:" + tracePath +", doesn't have a label.");
-							System.exit(0);
-						}
-						//
-						File traceDir =  new File(tracePath);
-						File[] sensorFileList = traceDir.listFiles();
-
-						for(int sensorIndex = 0; sensorIndex < sensorFileList.length; ++sensorIndex){ // find WiFi file in a trace
-
-							if(sensorFileList[sensorIndex].getName().indexOf("Wifi") == 0){
-								String inFileName = tracePath + "/" + sensorFileList[sensorIndex].getName();
 								FileInputStream fstream = new FileInputStream(inFileName);
 								DataInputStream in = new DataInputStream(fstream);
 								BufferedReader br = new BufferedReader (new InputStreamReader(in));
@@ -144,19 +123,9 @@ public class wifiTraining {
                                                                         }
 
 								}//end of while
-							}// end of finding WiFi file
-
-						}
-
-					}
-
-				}	
-
-				//
 			}
 			for(int i = 0; i < samplingIntervalOptionNum ; ++i){
-				bufWriterTrainArr[i].close();
-				bufWriterTestArr[i].close();
+				bufWriterOutArr[i].close();
 			}
 
 		}catch(Exception e)
@@ -164,16 +133,6 @@ public class wifiTraining {
 		   e.printStackTrace();	
                    System.err.println("ERROR: "+ e.getMessage() + " "+ e);
 		}
-	}
-	public static int getGroundtruthFromFileName(String f){
-		int i;
-		for(i = 0; i < activity.length; ++i){
-			if(f.indexOf(activity[i]) > 0){
-				return gt[i];
-			}
-		}
-
-		return -1;
 	}
 
 	public static void processAPList(WiFiAPList[] rawFPList, int N, int groundTruth){
@@ -261,13 +220,7 @@ public class wifiTraining {
 					String outFeature = aveCommonAPNumberRatio +","+ aveRssiDifference + ","+ aveTanimotoDistance + 
 					      ","+firstLastDifference +","+ groundTruth+"\n";
 					//System.out.println(outFeature);
-					if(r.nextInt() > 0.5){//training feature
-						bufWriterTrainArr[samplingIntervalIndex].write(outFeature);
-					}else{ //test feature
-						bufWriterTestArr[samplingIntervalIndex].write(outFeature);
-					}
-
-
+						bufWriterOutArr[samplingIntervalIndex].write(outFeature);
 				}catch(Exception e){
 					System.err.println("ERROR: "+ e.getMessage() + " "+ e);	
 
