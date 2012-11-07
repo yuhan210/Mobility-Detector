@@ -63,10 +63,10 @@ Solution ideas :
 If we assume we can't interact with the indoor outdoor detector, then we have the following :
 -------------------------------------
 
-Static : Accelerometer. 
-Walking : GPS , GSM , WiFi, Accelerometer
-Running : GPS , GSM , WiFi, Accelerometer
-Biking :  GPS , GSM , WiFi, Accelerometer
+Static : Accelerometer at lowest frequency   
+Walking : GPS, GSM, WiFi, Accelerometer, Nwk Loc
+Running : GPS, GSM, WiFi, Accelerometer, Nwk Loc
+Biking :  GPS, GSM, WiFi, Accelerometer, Nwk Loc
 Driving : GSM/GPS. 
 
 We can't interact with the indoor/outdoor detector because that breaks our composition / detection abstraction. 
@@ -101,3 +101,13 @@ Other things to do :
 
 2-Subsample data and see where that gets you. This is the energy vs accuracy tradeoff. 
 3-Combine or fuse sensor predictions.
+
+Feature vectors for different sensors are calculated over different time intervals, but the unifying feature is that we make a prediction once every minute. 
+
+Ok, some ideas :
+
+1. There is no point in combining all the features into one massive feature vector because that just makes feature selection so much harder.
+2. There is no point to doing ensemble averaging because there is no natural way to combine the outputs if one sensor says walking, one says driving, and so on. There might be a point to using different sensors in one state if the other sensors were detecting something out of band (like inside versus outside). 
+3. There is definitely a point to running a different sensor in each state depending on the energy budget and the proportion of each state and the number of states we are interested in calling back on.
+4. In reality, the state transition graph between the states is a 5-clique but making the graph simpler at the cost of some accuracy and latency might be one way of getting reduced energy consumption at the cost of accuracy. This way you can get to driving only by sitting, and then walking, and then driving.
+5. I don't think there is any reason to use a HMM. I can't seem to figure out what the transition probabilities will be.
