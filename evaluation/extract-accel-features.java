@@ -14,7 +14,7 @@ import java.lang.Integer;
  *  Take the trace file name and interested ground truth as input and generate feature vectors. 
  **/
 
-class extractAccelTrain {
+class extractAccelFeatures {
 
 	public static final int TIMEWINDOW_INTERVAL = 5 * 1000; //in ms, it decides the window size
 
