@@ -9,64 +9,31 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.lang.Integer;
 /**
- *  It searches for all the accel files in the ./static ./walking ./running ./biking ./driving folder.
- *  Compute the acceleration magnitude -> use a time window (it's size is specified in TIMEWINDOW_INTERVAL) -> extract various features from it 
- *  -> randomly write the features into two files ./train and ./test
- *
+ *  Take the trace file name and interested ground truth as input and generate feature vectors. 
  **/
 
-public class accelTrain {
+class extractAccelTrain {
 
 	public static final int TIMEWINDOW_INTERVAL = 5 * 1000; //in ms, it decides the window size
 
-	public static final String[] activity = {"static","walking","running","biking","driving"};
-	public static final int[] gt = {0,1,2,3,4};
+	public static FileWriter fvStream;
+	public static BufferedWriter fvOut;
 
-	public static FileWriter trainStream;
-	public static BufferedWriter trainOut;
-	public static FileWriter testStream;
-	public static BufferedWriter testOut;
-
-	public static final String PATHTORAWDATA = "/tmp/CITA_tmp";
 	public static void main(String args[]){
 
 		try{
-			/***/
-			trainStream = new FileWriter("train");
-			trainOut = new BufferedWriter(trainStream);
-			testStream = new FileWriter("test");
-			testOut = new BufferedWriter(testStream);
-			//
+							if ( args.length < 2 ) {
+								System.out.println("Usage : java extractAccelTrain trace-file ground-truth");
+								System.exit(-1);
+							}
+							fvStream = new FileWriter("fv.out");
+							fvOut = new BufferedWriter(fvStream);
 
-
-
-			File rawDataPath = new File(PATHTORAWDATA);
-			File[] userDirList = rawDataPath.listFiles(); 
-			for(int userIndex = 0; userIndex < userDirList.length; ++userIndex){// for each user's directory
-
-				String userPath = PATHTORAWDATA + "/" + userDirList[userIndex].getName();
-				File userDir = new File(userPath);
-				File[] traceList = userDir.listFiles();
-				for(int traceIndex = 0; traceIndex < traceList.length; ++traceIndex){// for each trace in a user's dir
-
-					// check ground truth
-					String tracePath = userPath + "/" + traceList[traceIndex].getName(); 
-					int groundTruth = getGroundtruthFromFileName(traceList[traceIndex].getName());
-					System.err.println(tracePath + ", " + activity[groundTruth]);
-					if(groundTruth < 0){
-						System.err.println("Trace:" + tracePath +", doesn't have a label.");
-						System.exit(0);
-					}
-					//
-
-					File traceDir =  new File(tracePath);
-					File[] sensorFileList = traceDir.listFiles();
-
-					for(int sensorIndex = 0; sensorIndex < sensorFileList.length; ++sensorIndex){ // find Accel file in a trace
-
-						if(sensorFileList[sensorIndex].getName().indexOf("Accel") == 0){
-							String inFileName = tracePath + "/" + sensorFileList[sensorIndex].getName();
+							String inFileName=args[0];
+							System.out.println("in file is "+inFileName);
+							int groundTruth=Integer.parseInt(args[1]);
 
 							FileInputStream fstream = new FileInputStream(inFileName);
 							DataInputStream in = new DataInputStream(fstream);
@@ -126,35 +93,13 @@ public class accelTrain {
 								}
 
 							}//end of while
-							in.close();
-
-						}
-
-					}
-
-				}
-
-			}	
-			testOut.close();
-			trainOut.close();
-
+		in.close();
+		fvOut.close();
 		}catch(Exception e)
 		{
                         e.printStackTrace();
 			System.err.println("ERROR: "+ e.getMessage() + " "+ e);
 		}
-	}
-	public static int getGroundtruthFromFileName(String f){
-		int i;
-		for(i = 0; i < activity.length; ++i){
-			if(f.indexOf(activity[i]) > 0){
-				return gt[i];
-			}
-		}
-
-		return -1;
-
-
 	}
 
 	public static void processAccelList(AccelElement[] a, int totalAccelElementNum, int groundTruth){
@@ -296,11 +241,7 @@ public class accelTrain {
 				       + currentWindowSV + "," + currentWindowEntropy + "," + groundTruth;
 				Random r = new Random();
 				try{
-					if(r.nextInt() > 0.5){
-						trainOut.write(outFeature + "\n");
-					}else{
-						testOut.write(outFeature + "\n");
-					}
+						fvOut.write(outFeature + "\n");
 				}catch(Exception e){
 					System.err.println("ERROR: "+ e.getMessage() + " "+ e);
 				}
