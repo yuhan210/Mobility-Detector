@@ -23,25 +23,33 @@ class extractWifiFeatures {
 	public static final String[] activity = {"static","walking","running","biking","driving"};
 	public static final int[] gt = {0,1,2,3,4};
 
+	
+	public static FileWriter fvStream;
+	public static BufferedWriter fvOut;
 	public static int TIMEWINDOW_INTERVAL = 60 * 1000; //ms
 	public static int SHIFT_INTERVAL = 10 * 1000; //ms
 
+	/*
 	public static String[] outFileNames;
 	public static FileWriter[] fileWriterOutArr;
 	public static BufferedWriter[] bufWriterOutArr;
-
+	
 	public static int[] samplingIntervalOption = {1,10};
 	public static int samplingIntervalIndex = 0;
+	*/
 
 	public static void main(String args[]){
 
 		try{
 			if ( args.length < 2 ) {
-				System.out.println("Usage : java extractWifiTrain trace-file ground-truth");
+				System.out.println("Usage : java extractWifiFeatures trace-file ground-truth");
 				System.exit(-1);
 			}
 
+			fvStream = new FileWriter("wifi.out");
+			fvOut = new BufferedWriter(fvStream);
 			// init feature output files //
+			/*
 			int samplingIntervalOptionNum = samplingIntervalOption.length;
 			outFileNames = new String[samplingIntervalOptionNum];
 			fileWriterOutArr = new FileWriter[samplingIntervalOptionNum];
@@ -51,15 +59,15 @@ class extractWifiFeatures {
 				outFileNames[i] = "wifi_" + samplingIntervalOption[i];
 				fileWriterOutArr[i] = new FileWriter(outFileNames[i]);
 				bufWriterOutArr[i] = new BufferedWriter(fileWriterOutArr[i]);
-			}
+			}*/
 			// end of init//
 
-			for(samplingIntervalIndex = 0; samplingIntervalIndex < samplingIntervalOption.length; ++samplingIntervalIndex){
+			//for(samplingIntervalIndex = 0; samplingIntervalIndex < samplingIntervalOption.length; ++samplingIntervalIndex){
 				String inFileName=args[0];
 				System.out.println("in file is "+inFileName);
 				int groundTruth=Integer.parseInt(args[1]);
 
-				System.err.println("\n+++++++ sampling interval: " + samplingIntervalOption[samplingIntervalIndex] + "sec(s) +++++++");
+				//System.err.println("\n+++++++ sampling interval: " + samplingIntervalOption[samplingIntervalIndex] + "sec(s) +++++++");
 								FileInputStream fstream = new FileInputStream(inFileName);
 								DataInputStream in = new DataInputStream(fstream);
 								BufferedReader br = new BufferedReader (new InputStreamReader(in));
@@ -121,10 +129,13 @@ class extractWifiFeatures {
                                                                         }
 
 								}//end of while
-			}
-			for(int i = 0; i < samplingIntervalOptionNum ; ++i){
+							in.close();
+							fvOut.close();
+			//}
+			
+			/*for(int i = 0; i < samplingIntervalOptionNum ; ++i){
 				bufWriterOutArr[i].close();
-			}
+			}*/
 
 		}catch(Exception e)
 		{
@@ -133,9 +144,9 @@ class extractWifiFeatures {
 		}
 	}
 
-	public static void processAPList(WiFiAPList[] rawFPList, int N, int groundTruth){
+	public static void processAPList(WiFiAPList[] l, int n, int groundTruth){
 
-		//downsampling...
+		/*downsampling...
 		WiFiAPList l[] = new WiFiAPList[N];
 		int downSamplingCounter = 0;
 		l[downSamplingCounter++] = rawFPList[0];
@@ -164,6 +175,7 @@ class extractWifiFeatures {
 
 		}
 		n = downSamplingCounter;
+		*/
 		// done
 	
 		int firstRawDataInCurrentWindow = 0;
@@ -191,18 +203,14 @@ class extractWifiFeatures {
 						int unionAPNum = unionAPNum(currentAPList[j-1], currentAPList[j]);
 						if(unionAPNum == 0){
 							aveCommonAPNumberRatio += 0;
+							aveRssiDifference += 10;
 
 						}else{	
-							aveCommonAPNumberRatio += sameAPNum(currentAPList[j-1], currentAPList[j])/(double)unionAPNum(currentAPList[j-1], currentAPList[j]);	
+							aveCommonAPNumberRatio += sameAPNum(currentAPList[j-1], currentAPList[j])/(double)unionAPNum(currentAPList[j-1], currentAPList[j]);					aveRssiDifference += calDistance(currentAPList[j-1], currentAPList[j])/(double) unionAPNum(currentAPList[j-1], currentAPList[j]);
 						}
 						aveTanimotoDistance += TanimotoDistance(currentAPList[j-1], currentAPList[j]);
 						
-						if(unionAPNum == 0){
-							aveRssiDifference += 10;
-						}else{
-						aveRssiDifference += calDistance(currentAPList[j-1], currentAPList[j])/(double) unionAPNum(currentAPList[j-1], currentAPList[j]);
-						}
-						}
+					}	
 					aveCommonAPNumberRatio /= (totalNumInWindow - 1) * 1.0;
 					aveRssiDifference /= (totalNumInWindow - 1) * 1.0;
 					aveTanimotoDistance /= (totalNumInWindow - 1) * 1.0;
@@ -217,8 +225,9 @@ class extractWifiFeatures {
 					Random r = new Random();
 					String outFeature = groundTruth+","+aveCommonAPNumberRatio +","+ aveRssiDifference + ","+ aveTanimotoDistance + 
 					      ","+firstLastDifference +"\n";
+						fvOut.write(outFeature);
 					//System.out.println(outFeature);
-						bufWriterOutArr[samplingIntervalIndex].write(outFeature);
+					//	bufWriterOutArr[samplingIntervalIndex].write(outFeature);
 				}catch(Exception e){
 					System.err.println("ERROR: "+ e.getMessage() + " "+ e);	
 

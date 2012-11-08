@@ -27,26 +27,30 @@ class extractGpsFeatures {
 	public static final String[] activity = {"static","walking","running","biking","driving"};
 	public static final int[] gt = {0,1,2,3,4};
 	public static final int TIMEWINDOW_INTERVAL = 60 * 1000; //ms
-	public static final int AVERAGE_SAMPLESIZE = 0;
+	public static int SHIFT_INTERVAL = 10 * 1000; //ms
 	
+	//public static int[] samplingIntervalOption = {1,10};
+	//public static int samplingIntervalIndex = 0;
 
-	public static int[] samplingIntervalOption = {1,10};
-	public static int samplingIntervalIndex = 0;
-
-	public static String[] outFileNames;
+	public static FileWriter fvStream;
+	public static BufferedWriter fvOut;
+	/*public static String[] outFileNames;
 	public static FileWriter[] fileWriterOutArr;
 	public static BufferedWriter[] bufWriterOutArr;
+	*/
 
 	public static void main(String args[]){
 
 		try{
 			if ( args.length < 2 ) {
-				System.out.println("Usage : java extractWifiTrain trace-file ground-truth");
+				System.out.println("Usage : java extractGpsFeatures trace-file ground-truth");
 				System.exit(-1);
 			}
+			fvStream = new FileWriter("gps.out");
+			fvOut = new BufferedWriter(fvStream);
 
 			// init feature output files //
-			int samplingIntervalOptionNum = samplingIntervalOption.length;
+			/*int samplingIntervalOptionNum = samplingIntervalOption.length;
 			outFileNames = new String[samplingIntervalOptionNum];
 			fileWriterOutArr = new FileWriter[samplingIntervalOptionNum];
 			bufWriterOutArr = new BufferedWriter[samplingIntervalOptionNum];
@@ -55,15 +59,15 @@ class extractGpsFeatures {
 				outFileNames[i] = "gps_" + samplingIntervalOption[i];
 				fileWriterOutArr[i] = new FileWriter(outFileNames[i]);
 				bufWriterOutArr[i] = new BufferedWriter(fileWriterOutArr[i]);
-			}
+			}*/
 			// end of init//
 
-		for(samplingIntervalIndex = 0; samplingIntervalIndex < samplingIntervalOption.length; ++samplingIntervalIndex){
+		//for(samplingIntervalIndex = 0; samplingIntervalIndex < samplingIntervalOption.length; ++samplingIntervalIndex){
 			String inFileName=args[0];
 			System.out.println("in file is "+inFileName);
 			int groundTruth=Integer.parseInt(args[1]);
 
-			System.err.println("\n+++++++ sampling interval: " + samplingIntervalOption[samplingIntervalIndex] + "sec(s) +++++++");
+			//System.err.println("\n+++++++ sampling interval: " + samplingIntervalOption[samplingIntervalIndex] + "sec(s) +++++++");
 							FileInputStream fstream = new FileInputStream(inFileName);
 							DataInputStream in = new DataInputStream(fstream);
 							BufferedReader br = new BufferedReader (new InputStreamReader(in));
@@ -109,17 +113,19 @@ class extractGpsFeatures {
 						}//end of while
 						in.close();
 
-		}// end of finding GPS file
-		for(int i = 0; i < samplingIntervalOptionNum ; ++i){
+		//}// end of finding GPS file
+		/*for(int i = 0; i < samplingIntervalOptionNum ; ++i){
 				bufWriterOutArr[i].close();
-		}
+		}*/
+		fvOut.close();
 		}catch(Exception e)
 		{
 			System.err.println("ERROR: "+ e.getMessage() + " "+ e);
 		}
 	}
-	public static void processGPSList(location[] rawGPSTrace, int NN, int groundTruth){
+	public static void processGPSList(location[] l, int totalElement, int groundTruth){
 		//downsampling...
+		/*
 		location l[] = new location[NN];
 		int downSamplingCounter = 0;
 		l[downSamplingCounter++] = rawGPSTrace[0];
@@ -139,15 +145,13 @@ class extractGpsFeatures {
 			}
 
 		}
-		int totalElement = downSamplingCounter;		
+		int totalElement = downSamplingCounter;	*/
 		// done, new trace in l, with size totalElement.	
-
 		int firstRawDataInCurrentWindow = 0;
 
 		for(int i = 1; i < totalElement; ++i){
 			if(l[i].timeStamp - l[firstRawDataInCurrentWindow].timeStamp > TIMEWINDOW_INTERVAL){
 				String outFeature = "";
-
 
 				int windowElements = i-firstRawDataInCurrentWindow;
 				location[] window = new location[windowElements];
@@ -186,8 +190,6 @@ class extractGpsFeatures {
 						currentWindowExpectedVelocity /= ((N-1)* 1.0);
 					}
 
-					outFeature += currentWindowTotalDistance + "," + currentWindowExpectedVelocity + "," + currentWindowMaxVelocity;
-
 					/** Feature 4: Variance of velocity **/
 					double currentWindowVar = 0.0;
 
@@ -198,25 +200,36 @@ class extractGpsFeatures {
 						currentWindowVar /= (N-2) * 1.0;
 					}
 
-					outFeature += "," + currentWindowVar;
 
 					/** Feature 5: Average Velocity **/
 					double currentWindowAveVelocity = 0.0;
 					if(currentWindowTotalDistance > 0 && (window[N-1].timeStamp - window[0].timeStamp) > 0){
 						currentWindowAveVelocity = currentWindowTotalDistance / (double)((window[N-1].timeStamp - window[0].timeStamp)/1000.0) ;
 					}
-					outFeature += "," + currentWindowAveVelocity;
+
+				outFeature += groundTruth+","+currentWindowTotalDistance + "," + currentWindowExpectedVelocity + "," + 
+					currentWindowMaxVelocity +"," + currentWindowVar+ "," + currentWindowAveVelocity;
+
 					try{
 						if( !((groundTruth == 3 || groundTruth == 4) && currentWindowTotalDistance < 10)){
 							Random r = new Random();
-								bufWriterOutArr[samplingIntervalIndex].write(groundTruth+","+outFeature + "\n");
+							fvOut.write(outFeature + "\n");
 						}
 					}catch(Exception e){
 						System.err.println("ERROR: "+ e.getMessage() + " "+ e);	
 
 					}
 				}
-				firstRawDataInCurrentWindow += windowElements/6;
+			//	firstRawDataInCurrentWindow += windowElements/2;
+			
+				for(int j = firstRawDataInCurrentWindow; j < i; ++j){
+					if((l[j].timeStamp - l[firstRawDataInCurrentWindow].timeStamp) >= SHIFT_INTERVAL){
+						firstRawDataInCurrentWindow = j;			
+						break;
+					}
+				}
+
+
 
 			}
 		}

@@ -14,28 +14,34 @@ class extractGsmFeatures {
 	public static final String[] activity = {"static","walking","running","biking","driving"};
 	public static final int[] gt = {0,1,2,3,4};
 
+	public static FileWriter fvStream;
+	public static BufferedWriter fvOut;
+	
 	public static int TIMEWINDOW_INTERVAL = 60 * 1000; //ms
-	public static int WINDOW_SIZE = 5;// number 
+//	public static int WINDOW_SIZE = 5;// number 
 	public static int SHIFT_INTERVAL = 10 * 1000; //ms
 
-	public static int[] samplingIntervalOption = {1};
+/*	public static int[] samplingIntervalOption = {1};
 	public static int samplingIntervalIndex = 0;
+*/
 
-
-	public static String[] outFileNames;
+/*	public static String[] outFileNames;
 	public static FileWriter[] fileWriterOutArr;
 	public static BufferedWriter[] bufWriterOutArr;
-
+*/
 	//public static final String PATHTORAWDATA = "C:\\Users\\yuhan\\Dropbox\\CITA_DATA";
-	public static final String PATHTORAWDATA = "C:\\Users\\yuhan\\Dropbox\\test";
+	//public static final String PATHTORAWDATA = "C:\\Users\\yuhan\\Dropbox\\test";
 	public static void main(String args[]){
 
 		try{
 			if ( args.length < 2 ) {
-				System.out.println("Usage : java extractWifiTrain trace-file ground-truth");
+				System.out.println("Usage : java extractGsmFeatures trace-file ground-truth");
 				System.exit(-1);
 			}
+			fvStream = new FileWriter("gsm.out");
+			fvOut = new BufferedWriter(fvStream);
 			// init feature output files //
+			/*
 			int samplingIntervalOptionNum = samplingIntervalOption.length;
 			outFileNames = new String[samplingIntervalOptionNum];
 			fileWriterOutArr = new FileWriter[samplingIntervalOptionNum];
@@ -46,14 +52,15 @@ class extractGsmFeatures {
 				fileWriterOutArr[i] = new FileWriter(outFileNames[i]);
 				bufWriterOutArr[i] = new BufferedWriter(fileWriterOutArr[i]);
 			}
+			*/
 			// end of init//
 
-			for(samplingIntervalIndex = 0; samplingIntervalIndex < samplingIntervalOption.length; ++samplingIntervalIndex){
+			//for(samplingIntervalIndex = 0; samplingIntervalIndex < samplingIntervalOption.length; ++samplingIntervalIndex){
 				String inFileName=args[0];
 				System.out.println("in file is "+inFileName);
 				int groundTruth=Integer.parseInt(args[1]);
 
-				System.err.println("++++++ sampling interval: " + samplingIntervalOption[samplingIntervalIndex] + " sec(s) ++++++");
+			//	System.err.println("++++++ sampling interval: " + samplingIntervalOption[samplingIntervalIndex] + " sec(s) ++++++");
 								FileInputStream fstream = new FileInputStream(inFileName);
 								DataInputStream in = new DataInputStream(fstream);
 								BufferedReader br = new BufferedReader (new InputStreamReader(in));
@@ -97,19 +104,20 @@ class extractGsmFeatures {
 
 								}//end of while
 								in.close();
-
-							}// end of finding GPS file
-			for(int i = 0; i < samplingIntervalOptionNum ; ++i){
+								fvOut.close();
+							//}// end of finding GPS file
+			/*for(int i = 0; i < samplingIntervalOptionNum ; ++i){
 				bufWriterOutArr[i].close();
-			}
+			}*/
 		}catch(Exception e)
 		{
 			System.err.println("ERROR: "+ e.getMessage() + " "+ e);
 		}
 	}
-	public static void processCellList(CellList[] rawCellList, int N, int groundTruth){
+	public static void processCellList(CellList[] l, int n, int groundTruth){
 
 		//downsampling... l would be the downsampled cell list, and n is it's size.
+		/*
 		CellList l[] = new CellList[N];
 		int downSamplingCounter = 0;
 		l[downSamplingCounter++] = rawCellList[0];
@@ -132,6 +140,7 @@ class extractGsmFeatures {
 
 		}
 		n = downSamplingCounter;
+		*/
 		// done
 
 
@@ -140,8 +149,7 @@ class extractGsmFeatures {
 		for(int i = 1; i < n; ++i){
 			if( l[i].timeStamp - l[firstRawDataInCurrentWindow].timeStamp > TIMEWINDOW_INTERVAL){
 
-				/** windowing... **/
-				/** 
+				/* windowing.. 
 				  CellList currentCellList[] = new CellList[i - firstRawDataInCurrentWindow];
 				  int counter = 0;
 				  for(int j = firstRawDataInCurrentWindow; j < i ; ++j){
@@ -159,7 +167,7 @@ class extractGsmFeatures {
 				  }
 				  }
 				  int totalNumInWindow  = counter;
-				 **/
+				 */
 				//
 
 				CellList currentCellList[] = new CellList[i - firstRawDataInCurrentWindow];
@@ -183,12 +191,15 @@ class extractGsmFeatures {
 						int unionNum = unionCellNum(currentCellList[j-1], currentCellList[j]);	
 						if(unionNum == 0){
 							aveCommonCellNumberRatio += 0;
+							aveRssiDifference += 3;
 						}else{
+							aveRssiDifference += calDistance(currentCellList[j-1], currentCellList[j])/(double) unionNum;
 							aveCommonCellNumberRatio += (sameCellnum(currentCellList[j-1], currentCellList[j])/ (double) unionNum);	
 						}
 						aveTanimotoDistance += TanimotoDistance(currentCellList[j-1], currentCellList[j]);
+							aveRssiDifference += calDistance(currentCellList[j-1], currentCellList[j])/(double) unionNum;
 
-						aveRssiDifference += calDistance(currentCellList[j-1], currentCellList[j])/(double) unionNum;
+						
 					}
 					aveCommonCellNumberRatio /= (totalNumInWindow - 1) * 1.0;
 					aveRssiDifference /= (totalNumInWindow - 1) * 1.0;
@@ -204,7 +215,8 @@ class extractGsmFeatures {
 					Random r = new Random();
 					String outFeature = groundTruth+","+aveCommonCellNumberRatio +","+ aveRssiDifference + ","+ aveTanimotoDistance + "," + firstLastDifference + "\n";
 					//System.out.println(outFeature);
-						bufWriterOutArr[samplingIntervalIndex].write(outFeature);
+					//	bufWriterOutArr[samplingIntervalIndex].write(outFeature);
+					fvOut.write(outFeature);
 				}catch(Exception e){
 					System.err.println("ERROR: "+ e.getMessage() + " "+ e);	
 				}
@@ -221,7 +233,7 @@ class extractGsmFeatures {
 		}
 	}
 
-
+	/*
 	public static CellList generateWindowCellList(CellList[] a){
 		int TRUSTOCCURENCE = 3;
 		double[][] cellIDList = new double[65536][2];
@@ -254,7 +266,7 @@ class extractGsmFeatures {
 
 		return result;
 
-	}
+	}*/
 	public static void initCellList(CellList[] l){
 		for(int i = 0; i < l.length; ++i){
 			l[i] = null;
