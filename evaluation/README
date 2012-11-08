@@ -4,3 +4,5 @@ Scripts to evaluate and try out different classifiers.
 3. extract-wifi-features.java extracts WiFi feature vectors given the WiFi trace. 
 4. extract-gps-features.java extracts GPS feature vectors given the GPS trace.
 5. extract-gsm-features.java extracts GSM feature vectors given the GSM trace. 
+6. eval-classifier.sh runs one specific classifier on the given testing file, given the training files. 
+7. run-harness.sh runs eval-classifier.sh after downsampling according to a user supplied argument. 
