@@ -38,7 +38,7 @@ class extractGsmFeatures {
 				System.out.println("Usage : java extractGsmFeatures trace-file ground-truth");
 				System.exit(-1);
 			}
-			fvStream = new FileWriter("gsm.out");
+			fvStream = new FileWriter("Gsm.out");
 			fvOut = new BufferedWriter(fvStream);
 			// init feature output files //
 			/*

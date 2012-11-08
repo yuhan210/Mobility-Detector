@@ -46,7 +46,7 @@ class extractGpsFeatures {
 				System.out.println("Usage : java extractGpsFeatures trace-file ground-truth");
 				System.exit(-1);
 			}
-			fvStream = new FileWriter("gps.out");
+			fvStream = new FileWriter("Gps.out");
 			fvOut = new BufferedWriter(fvStream);
 
 			// init feature output files //

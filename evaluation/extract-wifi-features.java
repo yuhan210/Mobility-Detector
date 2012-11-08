@@ -46,7 +46,7 @@ class extractWifiFeatures {
 				System.exit(-1);
 			}
 
-			fvStream = new FileWriter("wifi.out");
+			fvStream = new FileWriter("Wifi.out");
 			fvOut = new BufferedWriter(fvStream);
 			// init feature output files //
 			/*

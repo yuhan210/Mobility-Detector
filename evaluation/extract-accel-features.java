@@ -28,7 +28,7 @@ class extractAccelFeatures {
 								System.out.println("Usage : java extractAccelTrain trace-file ground-truth");
 								System.exit(-1);
 							}
-							fvStream = new FileWriter("accel.out");
+							fvStream = new FileWriter("Accel.out");
 							fvOut = new BufferedWriter(fvStream);
 
 							String inFileName=args[0];
