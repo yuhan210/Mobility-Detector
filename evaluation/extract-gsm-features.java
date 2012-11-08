@@ -202,7 +202,7 @@ class extractGsmFeatures {
 				try{
 
 					Random r = new Random();
-					String outFeature = aveCommonCellNumberRatio +","+ aveRssiDifference + ","+ aveTanimotoDistance + "," + firstLastDifference + "," + groundTruth+"\n";
+					String outFeature = groundTruth+","+aveCommonCellNumberRatio +","+ aveRssiDifference + ","+ aveTanimotoDistance + "," + firstLastDifference + "\n";
 					//System.out.println(outFeature);
 						bufWriterOutArr[samplingIntervalIndex].write(outFeature);
 				}catch(Exception e){

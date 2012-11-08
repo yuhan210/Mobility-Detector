@@ -1,1 +1,6 @@
 Scripts to evaluate and try out different classifiers.
+1. downsample.py downsamples any sensor trace.
+2. extract-accel-features.java extracts accelerometer feature vectors given the trace.
+3. extract-wifi-features.java extracts WiFi feature vectors given the WiFi trace. 
+4. extract-gps-features.java extracts GPS feature vectors given the GPS trace.
+5. extract-gsm-features.java extracts GSM feature vectors given the GSM trace. 

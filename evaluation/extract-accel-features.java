@@ -28,7 +28,7 @@ class extractAccelFeatures {
 								System.out.println("Usage : java extractAccelTrain trace-file ground-truth");
 								System.exit(-1);
 							}
-							fvStream = new FileWriter("fv.out");
+							fvStream = new FileWriter("accel.out");
 							fvOut = new BufferedWriter(fvStream);
 
 							String inFileName=args[0];
@@ -236,9 +236,9 @@ class extractAccelFeatures {
 				}
 				
 
-				outFeature += currentWindowMean + "," + currentWindowVar + "," + currentWindowPeakFreq +"," + 
+				outFeature += groundTruth+","+currentWindowMean + "," + currentWindowVar + "," + currentWindowPeakFreq +"," + 
 				       currentWindowPeakPowerRatio+ "," + currentWindowCL + "," + currentWindowANE + "," + currentWindowEnergy + ","
-				       + currentWindowSV + "," + currentWindowEntropy + "," + groundTruth;
+				       + currentWindowSV + "," + currentWindowEntropy ;
 				Random r = new Random();
 				try{
 						fvOut.write(outFeature + "\n");

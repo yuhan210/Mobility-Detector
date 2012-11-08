@@ -215,8 +215,8 @@ class extractWifiFeatures {
 				try{
 
 					Random r = new Random();
-					String outFeature = aveCommonAPNumberRatio +","+ aveRssiDifference + ","+ aveTanimotoDistance + 
-					      ","+firstLastDifference +","+ groundTruth+"\n";
+					String outFeature = groundTruth+","+aveCommonAPNumberRatio +","+ aveRssiDifference + ","+ aveTanimotoDistance + 
+					      ","+firstLastDifference +"\n";
 					//System.out.println(outFeature);
 						bufWriterOutArr[samplingIntervalIndex].write(outFeature);
 				}catch(Exception e){

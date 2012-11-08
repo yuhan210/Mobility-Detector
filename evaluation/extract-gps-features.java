@@ -209,7 +209,7 @@ class extractGpsFeatures {
 					try{
 						if( !((groundTruth == 3 || groundTruth == 4) && currentWindowTotalDistance < 10)){
 							Random r = new Random();
-								bufWriterOutArr[samplingIntervalIndex].write(outFeature + "," + groundTruth +"\n");
+								bufWriterOutArr[samplingIntervalIndex].write(groundTruth+","+outFeature + "\n");
 						}
 					}catch(Exception e){
 						System.err.println("ERROR: "+ e.getMessage() + " "+ e);	

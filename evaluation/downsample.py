@@ -8,7 +8,7 @@ sampling_interval=float(sys.argv[2]);
 last_sample=-1.00
 for line in sensor_trace_file.readlines() :
  records=line.split(',')
- timestamp=float(records[1])  
+ timestamp=float(records[1])/1.0e3  
  if (last_sample==-1) :
     last_sample=timestamp
     print line.strip() 
