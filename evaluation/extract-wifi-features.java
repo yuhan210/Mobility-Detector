@@ -33,8 +33,6 @@ class extractWifiFeatures {
 	public static int[] samplingIntervalOption = {1,10};
 	public static int samplingIntervalIndex = 0;
 
-	public static final String PATHTORAWDATA = "/tmp/CITA_DATA";	
-//	public static final String PATHTORAWDATA = "C:\\Users\\yuhan\\Dropbox\\test";
 	public static void main(String args[]){
 
 		try{
@@ -50,7 +48,7 @@ class extractWifiFeatures {
 			bufWriterOutArr = new BufferedWriter[samplingIntervalOptionNum];
 
 			for(int i = 0; i < samplingIntervalOptionNum ; ++i){
-				outFileNames[i] = "out_" + samplingIntervalOption[i];
+				outFileNames[i] = "wifi_" + samplingIntervalOption[i];
 				fileWriterOutArr[i] = new FileWriter(outFileNames[i]);
 				bufWriterOutArr[i] = new BufferedWriter(fileWriterOutArr[i]);
 			}
