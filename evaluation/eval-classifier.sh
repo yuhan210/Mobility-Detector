@@ -4,16 +4,13 @@ if [ $# -lt 6 ]; then
  echo "Enter GPS|GSM|Wifi|Accel for feature"
  exit 
 fi
-train_folder=$1
-test_folder=$2
+train_trace=$1
+test_trace=$2
 activity=$3
-negative_folder=$4
+negative_trace=$4
 negative_activity=$5
 feature=$6
 
-train_trace=$(ls $train_folder/"$feature"*)
-test_trace=$(ls $test_folder/"$feature"*)
-negative_trace=$(ls $negative_folder/"$feature"*)
 java extract"$feature"Features $train_trace $activity
 mv $feature.out  train.out
 java extract"$feature"Features $negative_trace $negative_activity
