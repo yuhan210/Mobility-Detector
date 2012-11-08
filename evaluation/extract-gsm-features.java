@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-class extractGsmFeatures {
+class extractGSMFeatures {
 
 	public static final String[] activity = {"static","walking","running","biking","driving"};
 	public static final int[] gt = {0,1,2,3,4};
@@ -38,7 +38,7 @@ class extractGsmFeatures {
 				System.out.println("Usage : java extractGsmFeatures trace-file ground-truth");
 				System.exit(-1);
 			}
-			fvStream = new FileWriter("Gsm.out");
+			fvStream = new FileWriter("GSM.out");
 			fvOut = new BufferedWriter(fvStream);
 			// init feature output files //
 			/*

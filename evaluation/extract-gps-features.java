@@ -22,7 +22,7 @@ import org.gavaghan.geodesy.GlobalCoordinates;
 import org.gavaghan.geodesy.GlobalPosition;
 
 
-class extractGpsFeatures {
+class extractGPSFeatures {
 
 	public static final String[] activity = {"static","walking","running","biking","driving"};
 	public static final int[] gt = {0,1,2,3,4};
@@ -46,7 +46,7 @@ class extractGpsFeatures {
 				System.out.println("Usage : java extractGpsFeatures trace-file ground-truth");
 				System.exit(-1);
 			}
-			fvStream = new FileWriter("Gps.out");
+			fvStream = new FileWriter("GPS.out");
 			fvOut = new BufferedWriter(fvStream);
 
 			// init feature output files //
