@@ -1,16 +1,22 @@
 %%
-function [] = classification(train_file,test_file)
+function [] = classification(train_file,test_file,num_components)
 	readRawDataFileName = train_file;
 	fidRead = fopen(readRawDataFileName, 'r');
 	data = textscan(fidRead, '%d %f %f %f %f %f %f %f %f %f', 'delimiter', ',');
-	featureVector1 = [data{2} data{3} data{4} data{5} data{6} data{7} data{8} data{9}];
+	featureVector1=[];
+	for i = 1:num_components,
+           featureVector1 = [featureVector1 data{i+1}];
+        end
 	gt1 = data{1};
 	fclose(fidRead);
 	
 	readTestDataFileName = test_file;
 	fidRead = fopen(readTestDataFileName, 'r');
 	testData = textscan(fidRead, '%d %f %f %f %f %f %f %f %f %f', 'delimiter', ',');
-	featureVector2 = [testData{2} testData{3} testData{4} testData{5} testData{6} testData{7} testData{8} testData{9}] ;
+	featureVector2=[];
+	for i = 1:num_components,
+           featureVector2 = [featureVector2 testData{i+1}];
+        end
 	gt2 = testData{1};
 	fclose(fidRead);
 	

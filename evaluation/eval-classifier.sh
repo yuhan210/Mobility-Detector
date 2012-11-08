@@ -20,4 +20,7 @@ java extract"$feature"Features $negative_trace $negative_activity
 cat $feature.out >> train.out
 java extract"$feature"Features $test_trace $activity
 mv $feature.out test.out
-matlab -r "classification ('train.out','test.out') " -nodesktop
+components=($(head -n1 test.out | tr "," "\n"))
+num_components=`expr ${#components[@]} '-' 1`
+echo "Number of feature vector Components are "$num_components
+matlab -r "classification ('train.out','test.out',$num_components) " -nodesktop
