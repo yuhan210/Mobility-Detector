@@ -28,23 +28,21 @@ function [] = classification(train_file,test_file,num_components)
 	for i = 1 : length(DTpredcitedLabel2Cell),
 	    DTpredcitedLabel2(i,1) = int32(str2num(DTpredcitedLabel2Cell{i}));
 	end
-	cMat1 = confusionmat(gt2,DTpredcitedLabel2,'ORDER',[0 1 2 3 4])
-	disp('Decision Tree - 1')
+	cMat1 = confusionmat(gt2,DTpredcitedLabel2,'ORDER',[0 1 2 3 4]);
 	for i = 1: size(cMat1,1),
 	   accuracy(i) = cMat1(i,i)/sum(cMat1(i,1:end));
 	end
-	accuracy
+	fprintf(1,'RESULT: Decision Tree\t');fprintf(1,'%f \t',accuracy)
 	clear t;
 		
 	%%
 	%Naive Bayes%
 	BaysianObject = NaiveBayes.fit(featureVector1,gt1,'Prior','uniform'); %classLabel=  posterior(BaysianObject,testVector)
 	classLabel=  BaysianObject.predict(featureVector2);
-	cMat1 = confusionmat(gt2,classLabel,'ORDER',[0 1 2 3 4])
+	cMat1 = confusionmat(gt2,classLabel,'ORDER',[0 1 2 3 4]);
 	
 	for i = 1: size(cMat1,1),
 	   accuracy(i) = cMat1(i,i)/sum(cMat1(i,1:end));
 	end
-	disp('Naive Bayes - 1')
-	accuracy	
+	fprintf(1,'\nRESULT: Naive Bayes\t');fprintf(1,'%f \t',accuracy)
 	exit;
