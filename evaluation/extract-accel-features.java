@@ -159,34 +159,6 @@ class extractAccelFeatures {
 				}
 				double currentWindowPeakFreq = ((peakPowerLocation + 1)/(N* 1.0)) * currentWindowFs;
 				
-				//***** Feature 4: Peak Power Ratio (freq domain) ****//
-				double sumPower = 0;
-				int countPower = 0;
-				for(int k = 1; k < currentWindowFFT.length; ++k){
-					sumPower += currentWindowFFT[k];
-					++countPower;
-				}
-				double currentWindowPeakPowerRatio = (peakPower * countPower)/sumPower;
-
-				//***** Feature 5: Curve Length (time domain) *****//
-				double currentWindowCL = 0.0;
-				for(int k = 1; k < N; ++k){
-					currentWindowCL += Math.abs(accelWindow[k].magnitude - accelWindow[k-1].magnitude);
-				}
-
-				//**** Feature 6: Non-linear Energy (time domain) ****//
-				double currentWindowANE = 0.0;
-				for(int k = 1; k < N-1; ++k){
-					currentWindowANE += (accelWindow[k].magnitude * accelWindow[k].magnitude) - (accelWindow[k-1].magnitude * accelWindow[k+1].magnitude); 
-				}
-				currentWindowANE /= N * 1.0;
-
-				//**** Feature 7: Window Energy (freq domain)****// 
-				double currentWindowEnergy = 0.0;
-				for(int k = 1; k < currentWindowFFT.length; ++k){
-					currentWindowEnergy += currentWindowFFT[k];
-				}
-
 				//**** Feature 8: Strength Variation (time domain)****//
 				List<Double> summit = new ArrayList<Double>();
 				List<Double> valley = new ArrayList<Double>();
@@ -227,18 +199,8 @@ class extractAccelFeatures {
 				}
 				double currentWindowSV = summitVar + valleyVar;
 
-
-				//***** Feature 9: Entropy (freq-domain) *****//
-				double currentWindowEntropy = 0;
-				for(int k = 1; k < currentWindowFFT.length; ++k){
-					double c = currentWindowFFT[k]/currentWindowEnergy;
-					currentWindowEntropy += (c * Math.log(1/c));
-				}
-				
-
-				outFeature += groundTruth+","+currentWindowMean + "," + currentWindowVar + "," + currentWindowPeakFreq +"," + 
-				       currentWindowPeakPowerRatio+ "," + currentWindowCL + "," + currentWindowANE + "," + currentWindowEnergy + ","
-				       + currentWindowSV + "," + currentWindowEntropy ;
+				outFeature += groundTruth+","+currentWindowMean + "," + currentWindowVar + "," + currentWindowPeakFreq +","
+				       + currentWindowSV   ;
 				Random r = new Random();
 				try{
 						fvOut.write(outFeature + "\n");
