@@ -86,7 +86,7 @@ while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `
   cd ~/cita/Mobility-Detector/evaluation;
   echo "Sampling rate is $sampling_rate, Sampling interval is $sampling_delta" 
- ./run-harness.sh ~/cita/CITA_DATA/Chern/2012-10-05-18-23-16_running ~/cita/CITA_DATA/Chern/2012-10-12-01-41-07_running 2 ~/cita/CITA_DATA/Chern/2012-09-15-14-57-41_biking 3 Accel  $sampling_delta
+ ./run-harness.sh ~/cita/CITA_DATA/Chern/2012-10-05-18-23-16_running ~/cita/CITA_DATA/Chern/2012-10-12-01-41-07_running 2 ~/cita/CITA_DATA/Chern/2012-09-15-14-57-41_biking 3 Accel $sampling_delta | grep "RESULT"
   sampling_rate=`expr $sampling_rate '+' 1`
 done
 
@@ -96,7 +96,7 @@ while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `
   cd ~/cita/Mobility-Detector/evaluation;
   echo "Sampling rate is $sampling_rate, Sampling interval is $sampling_delta" 
- ./run-harness.sh ~/cita/CITA_DATA/Chern/2012-10-05-18-23-16_running ~/cita/CITA_DATA/Chern/2012-10-12-01-41-07_running 2 ~/cita/CITA_DATA/Tiffany/2012-03-19-20-20-03_static 0 Accel 0.1 $sampling_delta
+ ./run-harness.sh ~/cita/CITA_DATA/Chern/2012-10-05-18-23-16_running ~/cita/CITA_DATA/Chern/2012-10-12-01-41-07_running 2 ~/cita/CITA_DATA/Tiffany/2012-03-19-20-20-03_static 0 Accel $sampling_delta | grep "RESULT"
   sampling_rate=`expr $sampling_rate '+' 1`
 done
 
