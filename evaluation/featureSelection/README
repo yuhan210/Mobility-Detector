@@ -1,0 +1,5 @@
+Feature selection experiment to decide the best set of accelerometer features for activity detection. It looks like the best 4 features are :
+Mean
+Variance
+Peak Frequency
+Strength Variation

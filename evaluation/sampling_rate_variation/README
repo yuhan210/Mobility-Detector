@@ -1,0 +1,3 @@
+Test variation of accuracy as a function of sampling rate for one on one classification i.e pairwise and not multi label.
+It looks like this experiment doesn't give us too much accuracy variation. In other words, the accuracy seems to be really good irrespective of how low the sampling rate is. 
+The next experiment therefore, is to study the accuracy of multi label classification (again as a function of sampling rate). 
