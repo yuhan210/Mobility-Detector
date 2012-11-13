@@ -25,7 +25,8 @@ for i in range(len(content)) :
     prevRecords = prevLine.split(',')
     prevTimeStamp = float(prevRecords[1])/1.0e3
     
-    if( abs((abs(last_sample - prevTimeStamp)) - sampling_interval) < abs((abs(timestamp - last_sample)) - sampling_interval)):
+    if( abs((abs(last_sample - prevTimeStamp)) - sampling_interval) < abs((abs(timestamp - last_sample)) - sampling_interval) and
+	last_sample != prevTimeStamp):
 	
     	last_sample = prevTimeStamp
 	print prevLine.strip()
