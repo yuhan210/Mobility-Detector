@@ -21,28 +21,30 @@ function [] = classification(train_file,test_file,num_components)
 	fclose(fidRead);
 	
 	%%
-	%Decision Tree%
-	t = classregtree(featureVector1,gt1,'method','classification');
-	
-	DTpredcitedLabel2Cell = eval(t,featureVector2);
-	for i = 1 : length(DTpredcitedLabel2Cell),
-	    DTpredcitedLabel2(i,1) = int32(str2num(DTpredcitedLabel2Cell{i}));
-	end
-	cMat1 = confusionmat(gt2,DTpredcitedLabel2,'ORDER',[0 1 2 3 4]);
-	for i = 1: size(cMat1,1),
-	   accuracy(i) = cMat1(i,i)/sum(cMat1(i,1:end));
-	end
-	fprintf(1,'RESULT: Decision Tree\t');fprintf(1,'%f \t',accuracy)
-	clear t;
-		
-	%%
 	%Naive Bayes%
+	%% modified to avoid zero variance %%
+	
+	trainGT = gt1(1,1);
+	for i = 2: length(gt1),
+		if gt1(i) ~= trainGT,
+			testIndext = i;
+			break;
+		end
+	end
+	if var(featureVector1(i:end,3)) == 0,
+		featureVector1(i,3) = featureVector1(i,3) + 0.0002;
+	end
+	if var(featureVector1(1:i,3)) == 0,
+		featureVector1(1,3) = featureVector1(1,3) + 0.0002;
+	end
+	% end of modification
 	BaysianObject = NaiveBayes.fit(featureVector1,gt1,'Prior','uniform'); %classLabel=  posterior(BaysianObject,testVector)
 	classLabel=  BaysianObject.predict(featureVector2);
-	cMat1 = confusionmat(gt2,classLabel,'ORDER',[0 1 2 3 4]);
+	cMat1 = confusionmat(gt2,classLabel,'ORDER',[0 1 2 3 4])
 	
 	for i = 1: size(cMat1,1),
 	   accuracy(i) = cMat1(i,i)/sum(cMat1(i,1:end));
 	end
 	fprintf(1,'\nRESULT: Naive Bayes\t');fprintf(1,'%f \t',accuracy)
+	fprintf(1,'\n');
 	exit;

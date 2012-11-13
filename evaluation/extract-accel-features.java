@@ -17,7 +17,7 @@ import java.lang.Integer;
 class extractAccelFeatures {
 
 	public static final int TIMEWINDOW_INTERVAL = 5 * 1000; //in ms, it decides the window size
-	public static final int TIMEWINDOW_SIZE = 150;
+	public static final int TIMEWINDOW_SIZE = 60;
 	public static FileWriter fvStream;
 	public static BufferedWriter fvOut;
 
