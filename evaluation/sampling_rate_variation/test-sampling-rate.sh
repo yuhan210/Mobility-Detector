@@ -1,16 +1,16 @@
 #! /bin/bash
 # biking driving
-echo "-----------biking  driving --------"
+echo "--biking,driving--"
 sampling_rate=1
 while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `
   cd ~/cita/Mobility-Detector/evaluation;
   echo "Sampling rate is $sampling_rate, Sampling interval is $sampling_delta"
- ./run-harness.sh ~/cita/CITA_DATA/Anirudh/2012-09-24-19-10-17_biking/ ~/cita/CITA_DATA/Anirudh/2012-09-30-17-52-22_biking/ 3 ~/cita/CITA_DATA/Tiffany/2012-10-06-06-48-16_driving 4 Accel $sampling_delta | grep "RESULT"  | grep "RESULT" 
+ ./run-harness.sh ~/cita/CITA_DATA/Anirudh/2012-09-24-19-10-17_biking/ ~/cita/CITA_DATA/Anirudh/2012-09-30-17-52-22_biking/ 3 ~/cita/CITA_DATA/Tiffany/2012-10-06-06-48-16_driving 4 Accel $sampling_delta | grep "RESULT"
   sampling_rate=`expr $sampling_rate '+' 1`
 done
 
-echo "----------walking driving----------"
+echo "--walking,driving--"
 sampling_rate=1
 while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `
@@ -20,7 +20,7 @@ while [ $sampling_rate -lt 10 ] ; do
   sampling_rate=`expr $sampling_rate '+' 1`
 done
 
-echo "--------walking static --------"
+echo "--walking,static--"
 sampling_rate=1
 while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `
@@ -30,7 +30,7 @@ while [ $sampling_rate -lt 10 ] ; do
   sampling_rate=`expr $sampling_rate '+' 1`
 done
 
-echo "--------walking running --------"
+echo "--walking,running--"
 sampling_rate=1
 while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `
@@ -40,7 +40,7 @@ while [ $sampling_rate -lt 10 ] ; do
   sampling_rate=`expr $sampling_rate '+' 1`
 done
 
-echo "---------driving walking--------"
+echo "--driving,walking--"
 sampling_rate=1
 while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `
@@ -50,7 +50,7 @@ while [ $sampling_rate -lt 10 ] ; do
   sampling_rate=`expr $sampling_rate '+' 1`
 done
 
-echo "---------driving static--------"
+echo "--driving,static--"
 sampling_rate=1
 while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `
@@ -60,7 +60,7 @@ while [ $sampling_rate -lt 10 ] ; do
   sampling_rate=`expr $sampling_rate '+' 1`
 done
 
-echo "---------driving running--------"
+echo "--driving,running--"
 sampling_rate=1
 while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `
@@ -70,7 +70,7 @@ while [ $sampling_rate -lt 10 ] ; do
   sampling_rate=`expr $sampling_rate '+' 1`
 done
 
-echo "---------running driving--------"
+echo "--running,driving--"
 sampling_rate=1
 while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `
@@ -80,7 +80,7 @@ while [ $sampling_rate -lt 10 ] ; do
   sampling_rate=`expr $sampling_rate '+' 1`
 done
 
-echo "-----------running biking ----------"
+echo "--running,biking--"
 sampling_rate=1
 while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `
@@ -90,7 +90,7 @@ while [ $sampling_rate -lt 10 ] ; do
   sampling_rate=`expr $sampling_rate '+' 1`
 done
 
-echo "-------- running static -----------"
+echo "--running,static--"
 sampling_rate=1
 while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `
@@ -100,7 +100,7 @@ while [ $sampling_rate -lt 10 ] ; do
   sampling_rate=`expr $sampling_rate '+' 1`
 done
 
-echo "--------- running walking ---------"
+echo "--running,walking--"
 sampling_rate=1
 while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `
@@ -110,7 +110,7 @@ while [ $sampling_rate -lt 10 ] ; do
   sampling_rate=`expr $sampling_rate '+' 1`
 done
 
-echo "------------ biking  static -------------"
+echo "--biking,static--"
 sampling_rate=1
 while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `
@@ -120,7 +120,7 @@ while [ $sampling_rate -lt 10 ] ; do
   sampling_rate=`expr $sampling_rate '+' 1`
 done
 
-echo "------------ biking  running -------------"
+echo "--biking,running--"
 sampling_rate=1
 while [ $sampling_rate -lt 10 ] ; do
   sampling_delta=`echo "scale=5; 1 / $sampling_rate;" | bc `

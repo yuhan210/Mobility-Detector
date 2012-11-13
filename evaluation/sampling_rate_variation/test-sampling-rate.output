@@ -1,4 +1,4 @@
------------biking  driving --------
+--biking,driving--
 Sampling rate is 1, Sampling interval is 1.00000
 RESULT: Decision Tree	NaN 	NaN 	NaN 	0.579661 	NaN 	
 RESULT: Naive Bayes	NaN 	NaN 	NaN 	0.613559 	NaN 	[?1l>
@@ -26,7 +26,7 @@ RESULT: Naive Bayes	NaN 	NaN 	NaN 	0.766667 	NaN 	[?1l>
 Sampling rate is 9, Sampling interval is .11111
 RESULT: Decision Tree	NaN 	NaN 	NaN 	0.752101 	NaN 	
 RESULT: Naive Bayes	NaN 	NaN 	NaN 	0.777311 	NaN 	[?1l>
-----------walking driving----------
+--walking,driving--
 Sampling rate is 1, Sampling interval is 1.00000
 RESULT: Decision Tree	NaN 	0.862782 	NaN 	NaN 	NaN 	
 RESULT: Naive Bayes	NaN 	0.851504 	NaN 	NaN 	NaN 	[?1l>
@@ -54,7 +54,7 @@ RESULT: Naive Bayes	NaN 	0.914747 	NaN 	NaN 	NaN 	[?1l>
 Sampling rate is 9, Sampling interval is .11111
 RESULT: Decision Tree	NaN 	0.972093 	NaN 	NaN 	NaN 	
 RESULT: Naive Bayes	NaN 	0.916279 	NaN 	NaN 	NaN 	[?1l>
---------walking static --------
+--walking,static--
 Sampling rate is 1, Sampling interval is 1.00000
 RESULT: Decision Tree	NaN 	0.998120 	NaN 	NaN 	NaN 	
 RESULT: Naive Bayes	NaN 	0.960526 	NaN 	NaN 	NaN 	[?1l>
@@ -82,7 +82,7 @@ RESULT: Naive Bayes	NaN 	1.000000 	NaN 	NaN 	NaN 	[?1l>
 Sampling rate is 9, Sampling interval is .11111
 RESULT: Decision Tree	NaN 	1.000000 	NaN 	NaN 	NaN 	
 RESULT: Naive Bayes	NaN 	1.000000 	NaN 	NaN 	NaN 	[?1l>
---------walking running --------
+--walking,running--
 Sampling rate is 1, Sampling interval is 1.00000
 RESULT: Decision Tree	NaN 	0.522556 	NaN 	NaN 	NaN 	
 RESULT: Naive Bayes	NaN 	0.924812 	NaN 	NaN 	NaN 	[?1l>
@@ -110,7 +110,7 @@ RESULT: Naive Bayes	NaN 	1.000000 	NaN 	NaN 	NaN 	[?1l>
 Sampling rate is 9, Sampling interval is .11111
 RESULT: Decision Tree	NaN 	0.920930 	NaN 	NaN 	NaN 	
 RESULT: Naive Bayes	NaN 	1.000000 	NaN 	NaN 	NaN 	[?1l>
----------driving walking--------
+--driving,walking--
 Sampling rate is 1, Sampling interval is 1.00000
 RESULT: Decision Tree	NaN 	NaN 	NaN 	NaN 	0.833123 	
 RESULT: Naive Bayes	NaN 	NaN 	NaN 	NaN 	0.998736 	[?1l>
@@ -138,7 +138,7 @@ RESULT: Naive Bayes	NaN 	NaN 	NaN 	NaN 	1.000000 	[?1l>
 Sampling rate is 9, Sampling interval is .11111
 RESULT: Decision Tree	NaN 	NaN 	NaN 	NaN 	0.882075 	
 RESULT: Naive Bayes	NaN 	NaN 	NaN 	NaN 	1.000000 	[?1l>
----------driving static--------
+--driving,static--
 Sampling rate is 1, Sampling interval is 1.00000
 RESULT: Decision Tree	NaN 	NaN 	NaN 	NaN 	1.000000 	
 RESULT: Naive Bayes	NaN 	NaN 	NaN 	NaN 	0.469027 	[?1l>
@@ -166,7 +166,7 @@ RESULT: Naive Bayes	NaN 	NaN 	NaN 	NaN 	0.995334 	[?1l>
 Sampling rate is 9, Sampling interval is .11111
 RESULT: Decision Tree	NaN 	NaN 	NaN 	NaN 	0.968553 	
 RESULT: Naive Bayes	NaN 	NaN 	NaN 	NaN 	1.000000 	[?1l>
----------driving running--------
+--driving,running--
 Sampling rate is 1, Sampling interval is 1.00000
 RESULT: Decision Tree	NaN 	NaN 	NaN 	NaN 	0.998736 	
 RESULT: Naive Bayes	NaN 	NaN 	NaN 	NaN 	1.000000 	[?1l>
@@ -194,7 +194,7 @@ RESULT: Naive Bayes	NaN 	NaN 	NaN 	NaN 	1.000000 	[?1l>
 Sampling rate is 9, Sampling interval is .11111
 RESULT: Decision Tree	NaN 	NaN 	NaN 	NaN 	1.000000 	
 RESULT: Naive Bayes	NaN 	NaN 	NaN 	NaN 	1.000000 	[?1l>
----------running driving--------
+--running,driving--
 Sampling rate is 1, Sampling interval is 1.00000
 RESULT: Decision Tree	NaN 	NaN 	0.997104 	NaN 	NaN 	
 RESULT: Naive Bayes	NaN 	NaN 	0.988414 	NaN 	NaN 	[?1l>
@@ -222,7 +222,7 @@ RESULT: Naive Bayes	NaN 	NaN 	0.998222 	NaN 	NaN 	[?1l>
 Sampling rate is 9, Sampling interval is .11111
 RESULT: Decision Tree	NaN 	NaN 	0.999103 	NaN 	NaN 	
 RESULT: Naive Bayes	NaN 	NaN 	0.999103 	NaN 	NaN 	[?1l>
------------running biking ----------
+--running,biking--
 Sampling rate is 1, Sampling interval is 1.00000
 RESULT: Decision Tree	NaN 	NaN 	0.910210 	NaN 	NaN 	
 RESULT: Naive Bayes	NaN 	NaN 	0.909486 	NaN 	NaN 	[?1l>
@@ -250,7 +250,7 @@ RESULT: Naive Bayes	NaN 	NaN 	0.986667 	NaN 	NaN 	[?1l>
 Sampling rate is 9, Sampling interval is .11111
 RESULT: Decision Tree	NaN 	NaN 	0.982960 	NaN 	NaN 	
 RESULT: Naive Bayes	NaN 	NaN 	0.985650 	NaN 	NaN 	[?1l>
--------- running static -----------
+--running,static--
 Sampling rate is 1, Sampling interval is 1.00000
 RESULT: Decision Tree	NaN 	NaN 	0.999276 	NaN 	NaN 	
 RESULT: Naive Bayes	NaN 	NaN 	1.000000 	NaN 	NaN 	[?1l>
@@ -278,7 +278,7 @@ RESULT: Naive Bayes	NaN 	NaN 	1.000000 	NaN 	NaN 	[?1l>
 Sampling rate is 9, Sampling interval is .11111
 RESULT: Decision Tree	NaN 	NaN 	1.000000 	NaN 	NaN 	
 RESULT: Naive Bayes	NaN 	NaN 	1.000000 	NaN 	NaN 	[?1l>
---------- running walking ---------
+--running,walking--
 Sampling rate is 1, Sampling interval is 1.00000
 RESULT: Decision Tree	NaN 	NaN 	0.954381 	NaN 	NaN 	
 RESULT: Naive Bayes	NaN 	NaN 	0.909486 	NaN 	NaN 	[?1l>
@@ -306,7 +306,7 @@ RESULT: Naive Bayes	NaN 	NaN 	0.989333 	NaN 	NaN 	[?1l>
 Sampling rate is 9, Sampling interval is .11111
 RESULT: Decision Tree	NaN 	NaN 	0.990135 	NaN 	NaN 	
 RESULT: Naive Bayes	NaN 	NaN 	0.991928 	NaN 	NaN 	[?1l>
------------- biking  static -------------
+--biking,static--
 Sampling rate is 1, Sampling interval is 1.00000
 RESULT: Decision Tree	NaN 	NaN 	NaN 	0.952542 	NaN 	
 RESULT: Naive Bayes	NaN 	NaN 	NaN 	0.908475 	NaN 	[?1l>
@@ -334,7 +334,7 @@ RESULT: Naive Bayes	NaN 	NaN 	NaN 	1.000000 	NaN 	[?1l>
 Sampling rate is 9, Sampling interval is .11111
 RESULT: Decision Tree	NaN 	NaN 	NaN 	0.987395 	NaN 	
 RESULT: Naive Bayes	NaN 	NaN 	NaN 	1.000000 	NaN 	[?1l>
------------- biking  running -------------
+--biking,running--
 Sampling rate is 1, Sampling interval is 1.00000
 RESULT: Decision Tree	NaN 	NaN 	NaN 	0.728814 	NaN 	
 RESULT: Naive Bayes	NaN 	NaN 	NaN 	0.935593 	NaN 	[?1l>
