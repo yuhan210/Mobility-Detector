@@ -17,7 +17,7 @@ import java.lang.Integer;
 class extractAccelFeatures {
 
 	public static final int TIMEWINDOW_INTERVAL = 5 * 1000; //in ms, it decides the window size
-
+	public static final int TIMEWINDOW_SIZE = 150;
 	public static FileWriter fvStream;
 	public static BufferedWriter fvOut;
 
@@ -108,6 +108,7 @@ class extractAccelFeatures {
 		for(int i = 1; i < totalAccelElementNum; ++i){ // loop through the entire trace, totalAccelElementNum: number of samples in the trace 
 
 			if(a[i].timeStamp - a[firstRawDataInCurrentWindow].timeStamp > TIMEWINDOW_INTERVAL){ // a timewindow
+			//if(i - firstRawDataInCurrentWindow > TIMEWINDOW_SIZE){
 				String outFeature = "";
 			
 			        // process the time window, start time: a[firstRawDataInCurrentWindow].timeStamp, end time: a[i-1].timeStamp	
@@ -152,8 +153,8 @@ class extractAccelFeatures {
 				double peakPower = -Double.MAX_VALUE;
 				int peakPowerLocation = -1;
 				for(int k = 1; k < currentWindowFFT.length; ++k){ // ignore index 0 (0Hz)
-					if(currentWindowFFT[k] > peakPower){
-						peakPower = currentWindowFFT[k];
+					if(currentWindowFFT[k] * currentWindowFFT[k] > peakPower){
+						peakPower = currentWindowFFT[k] * currentWindowFFT[k];
 						peakPowerLocation = k;
 					}
 				}
@@ -200,7 +201,7 @@ class extractAccelFeatures {
 				double currentWindowSV = summitVar + valleyVar;
 
 				outFeature += groundTruth+","+currentWindowMean + "," + currentWindowVar + "," + currentWindowPeakFreq +","
-				       + currentWindowSV   ;
+				       + currentWindowSV;
 				Random r = new Random();
 				try{
 						fvOut.write(outFeature + "\n");
