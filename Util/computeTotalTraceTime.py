@@ -2,21 +2,39 @@ import matplotlib.pyplot as plt
 import numpy as np 
 import os
 
-def getTraceLength(file): # return trace length in seconds
-    firstTimeStamp = 0
-    lastTimeStamp = 0
-    for line in file:
-        tSeg = line.split(",")
-        curTimeStampSeg = tSeg[1].split(".") # time in milli second
-        lastTimeStamp = float(curTimeStampSeg[0])
-                
-        if firstTimeStamp == 0:
-            firstTimeStamp = lastTimeStamp
-	
-    length = (lastTimeStamp - firstTimeStamp)/1000
-    return length
 
-def getGroundTruth(fileName):
+def getTimeStamp(s):
+        sSeg = s.split(",")
+        timeSeg = sSeg[1].split(".")
+        t = long(timeSeg[0])
+
+        return t
+def getCurGroundTruth(s):
+        seg = s.split("|")
+        t = int(seg[3])
+
+        return t
+
+
+def getTraceLength(filePath, traceGT): # return trace length in seconds
+    foo = open(filePath, "r")
+    content = foo.readlines()
+    totalLength = 0
+    for i in range(1,len(content)):
+    
+        prevTime = getTimeStamp(content[i-1])
+        curTime = getTimeStamp(content[i])
+        prevGT = getCurGroundTruth(content[i-1])
+        curGT =getCurGroundTruth(content[i])
+
+        if prevGT == traceGT and curGT == traceGT and curTime > prevTime :
+            totalLength += (curTime - prevTime)
+	
+    foo.close()
+    return float(totalLength/1000)
+
+def getTraceGroundTruth(fileName):
+    groundTruth = -1
     if(fileName.find('static') >= 0):
         groundTruth = 0
     if(fileName.find('walking') >= 0):
@@ -34,52 +52,52 @@ walkingTraceLength = 0
 runningTraceLength = 0
 bikingTraceLength = 0
 drivingTraceLength = 0
-path = 'C:\Users\yuhan\Dropbox\CITA_DATA\Somak'
+path = 'C:\Users\yuhan\Dropbox\CITA_TESTING_DATA\HTC Inspire_NY'
 
 fListing = os.listdir(path)
 
 for trace in fListing:
     print trace
     
-    groundTruth = getGroundTruth(trace)
+    groundTruth = getTraceGroundTruth(trace)
     for infile in os.listdir(path + '/' + trace):
         if groundTruth == 0 and infile.find('Accel') >= 0 and os.path.isdir(infile) == False:
         
-            foo = open(path + '/' + trace + '/' + infile)
+            
             print infile
-            staticTraceLength = staticTraceLength + getTraceLength(foo)
+            staticTraceLength = staticTraceLength + getTraceLength(path + '/' + trace + '/' + infile, groundTruth)
        
-            foo.close()
+           
         
         if groundTruth == 1 and infile.find('Accel') >= 0 and os.path.isdir(infile) == False:
-            foo = open(path + '/' + trace + '/' + infile)
+           
             print infile
-            walkingTraceLength = walkingTraceLength + getTraceLength(foo)
-            foo.close()
+            walkingTraceLength = walkingTraceLength + getTraceLength(path + '/' + trace + '/' + infile, groundTruth)
+            
         
         
         if groundTruth == 3 and infile.find('Accel') >= 0 and os.path.isdir(infile) == False:
-             foo = open(path + '/' + trace + '/' + infile)
+             
              print infile
-             bikingTraceLength = bikingTraceLength + getTraceLength(foo)
-             foo.close()
+             bikingTraceLength = bikingTraceLength + getTraceLength(path + '/' + trace + '/' + infile, groundTruth)
+            
                  
         if groundTruth == 4 and infile.find('Accel') >= 0 and os.path.isdir(infile) == False:
-            foo = open(path + '/' + trace + '/' + infile)
+            
             print infile
-            drivingTraceLength = drivingTraceLength + getTraceLength(foo)
-            foo.close()
+            drivingTraceLength = drivingTraceLength + getTraceLength(path + '/' + trace + '/' + infile, groundTruth)
+            
          
         if groundTruth == 2 and infile.find('Accel') >= 0 and os.path.isdir(infile) == False:
-            foo = open(path + '/' + trace + '/' + infile)
+            
             print infile
-            runningTraceLength = runningTraceLength + getTraceLength(foo)
-            foo.close()
+            runningTraceLength = runningTraceLength + getTraceLength(path + '/' + trace + '/' + infile, groundTruth)
+            
          
         
 
-print staticTraceLength/3600
-print walkingTraceLength/3600
-print runningTraceLength/3600
-print bikingTraceLength/3600
-print drivingTraceLength/3600
+print "static(hrs):" + str(staticTraceLength/3600)
+print "walking(hrs):" + str(walkingTraceLength/3600)
+print "running(hrs):" + str(runningTraceLength/3600)
+print "biking(hrs):" + str(bikingTraceLength/3600)
+print "driving(hrs):"+ str(drivingTraceLength/3600)
