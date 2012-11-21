@@ -1,0 +1,18 @@
+
+
+###### Set 1 ######
+# training set
+cat ~/cita/CLEAN_DATA/Tiffany/static/2012-07-16-23-10-22_static/* > Tiffany-static.out
+cat ~/cita/CLEAN_DATA/Tiffany/walking/2012-07-17-21-38-59_walking/* > Tiffany-walking.out
+cat ~/cita/CLEAN_DATA/Chern/running/2012-10-05-19-05-13_running/* > Chern-running.out
+cat ~/cita/CLEAN_DATA/Tiffany/biking/2012-09-14-18-23-22_biking/* > Tiffany-biking.out
+cat ~/cita/CLEAN_DATA/Tiffany/driving/2012-07-20-10-25-08_driving/* > Tiffany-driving.out
+
+# test set
+
+cat ~/cita/CLEAN_DATA/Tiffany/static/2012-03-20-16-00-10_static/* > Tiffany-static.out
+cat ~/cita/CLEAN_DATA/Tiffany/walking/2012-03-21-11-04-14_walking/* > Tiffany-walking.out
+cat ~/cita/CLEAN_DATA/Tiffany/biking/2012-09-14-18-10-33_biking/* > Tiffany-biking.out
+cat ~/cita/CLEAN_DATA/Chern/running/2012-10-13-21-11-52_running/* > Chern-running.out
+cat ~/cita/CLEAN_DATA/Tiffany/driving/2012-10-06-06-52-14_driving/* > Tiffany-driving.out
+

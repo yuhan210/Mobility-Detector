@@ -1,0 +1,9 @@
+Hard match  0.635639286541
+Soft match  0.635636006252
+Detection latency : 
+ -----------
+Activity: 1  starts @  0  Latency:  11005  ms with  10  samples
+Activity: 0  starts @  43058  Latency:  1947  ms with  10  samples
+Activity: 2  starts @  63332  Latency:  40668  ms with  10  samples
+Activity: 0  starts @  418569  Latency:  3433  ms with  10  samples
+Activity: 1  starts @  637774  Latency:  57240  ms with  10  samples
