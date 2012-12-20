@@ -1,6 +1,6 @@
 #! /bin/bash
 
-if [ $# -lt 2]; then
+if [ $# -lt 2 ]; then
  echo "Usage: user-trace-folder new-folder-for-clean-trace"
  exit
 fi
@@ -12,7 +12,7 @@ for x in "$1"*
 do
  echo " "
  echo "$x"
- python traceSanitizer.py "$x" "$dest_folder"
+ python traceSanitizer_cutter.py "$x" "$dest_folder"
 
 
 done

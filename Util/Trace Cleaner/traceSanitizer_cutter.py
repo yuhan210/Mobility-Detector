@@ -174,7 +174,6 @@ def createCleanTraces(tracePath, destPath, pairDict):
 				print "file's empty"
 				continue
 			
-			newFile = ""
 			for line in content:
 				curTime = getTimeStamp(line)
 				
