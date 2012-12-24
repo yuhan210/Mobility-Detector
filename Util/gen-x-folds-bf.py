@@ -107,18 +107,18 @@ def genFolds(fold_num, target_length, traceDict,delta,dest_root):
 	print "target_length", target_length
 	for i in xrange(fold_num):
 		folder = str(i+1)
-		if not os.path.exists(root+"/"+ folder): 
-			os.makedirs(root+"/"+ folder)	
-		if not os.path.exists(root+"/"+folder+"/s"):
-			os.makedirs(root+"/"+ folder + "/s")	
-		if not os.path.exists(root+"/"+folder+"/w"):
-			os.makedirs(root+"/"+ folder + "/w")	
-		if not os.path.exists(root+"/"+folder+"/b"):
-			os.makedirs(root+"/"+ folder + "/b")	
-		if not os.path.exists(root+"/"+folder+"/r"):
-			os.makedirs(root+"/"+ folder + "/r")	
-		if not os.path.exists(root+"/"+folder+"/d"):
-			os.makedirs(root+"/"+ folder + "/d")
+		if not os.path.exists(dest_root+"/"+ folder): 
+			os.makedirs(dest_root+"/"+ folder)	
+		if not os.path.exists(dest_root+"/"+folder+"/s"):
+			os.makedirs(dest_root+"/"+ folder + "/s")	
+		if not os.path.exists(dest_root+"/"+folder+"/w"):
+			os.makedirs(dest_root+"/"+ folder + "/w")	
+		if not os.path.exists(dest_root+"/"+folder+"/b"):
+			os.makedirs(dest_root+"/"+ folder + "/b")	
+		if not os.path.exists(dest_root+"/"+folder+"/r"):
+			os.makedirs(dest_root+"/"+ folder + "/r")	
+		if not os.path.exists(dest_root+"/"+folder+"/d"):
+			os.makedirs(dest_root+"/"+ folder + "/d")
 	
 	for activity in traceDict:
 		
@@ -144,7 +144,7 @@ def genFolds(fold_num, target_length, traceDict,delta,dest_root):
 				new_file_name = f.split("/")[-1]
 				activity_dir = getActivity(activity)
 				print dest_root+"/"+str(i+1)+"/"+activity_dir+"/"+new_file_name
-				shutil.copy(f, dest_root+"/"+str(i)+"/"+activity_dir+"/"+f)
+				shutil.copy(f, dest_root+"/"+str(i+1)+"/"+activity_dir+"/"+new_file_name)
 				
 		
 def removeDupTrace(possible_trace_comb, fold_num):
@@ -177,15 +177,12 @@ if __name__ == "__main__":
 	traceDict = getTraceLengthDict(root) # a dict(activity) of a list of dict(filename, length)
 	
 	activity_total_length = compute_activity_total_time(traceDict)
-	print activity_total_length.sort()
-	activity_length_for_each_folder =  activity_total_length[1]/(fold_num * 1.0)
+	activity_total_length.sort()
+	print activity_total_length
+	activity_length_for_each_folder =  activity_total_length[0]/(fold_num * 1.0)
 	
 	genFolds(fold_num, activity_length_for_each_folder, traceDict, delta, dest_path)
 	#print activity_total_length	
 	
-	#for activity in traceDict:
 			
 	
-	
-W = [2,3,4,5,6]
-SUM = 15
