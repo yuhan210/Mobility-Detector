@@ -23,17 +23,16 @@ def parseWekaOutputFile(file_path):
 	return weka_result_list
 
 def dhmm(ob_list, transition_prob):
-	#init
 	state_score = [0,0,0,0,0]
 	hmm_result_list = []	
 	for weka_ob in ob_list:
 		new_state_score = [0,0,0,0,0]
 
 		for i in xrange(5):
-			max_score = -10000000000
+			max_score = -1.0 * sys.float_info.max
 			for j in xrange(5):
 				transition_score = transition_prob[j][i]
-				cand_score = state_score[j] + log(transition_score) + log(max(weka_ob['prob_dist'][i],0.000001))
+				cand_score = state_score[j] + log(transition_score) + log(max(weka_ob['prob_dist'][i],0.001))
 				if cand_score > max_score:
 					max_score = cand_score
 
@@ -66,7 +65,7 @@ if __name__ == "__main__":
 	# a list of dict(gnd_truth, prediction, prob dist:[])
 	weka_pred_result = parseWekaOutputFile(weka_output_file)
 	# a list of dict(gnd_truth, prediction, prob dist:[])
-	transition_prob = [[0.9,0.3,0.3,0.3,0.3],[0.3,0.9,0.1,0.3,0.1],[0.3,0.3,0.9,0.000001,0.000001],[0.3,0.3,0.1,0.9,0.1],[0.5,0.000001,0.000001,0.000001,0.9]]
+	transition_prob = [[1,0.2,0.2,0.2,0.2],[0.2,1,0.1,0.2,0.1],[0.2,0.2,1,0.00000001,0.00000001],[0.2,0.00000001,0.00000001,1,0.00000001],[0.2,0.00000001,0.00000001,0.00000001,1]]
 	hmm_pred_result = dhmm(weka_pred_result,transition_prob)
 	# precision, recall, accuracy
 	print getAccuracy(weka_pred_result)
