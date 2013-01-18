@@ -1,3 +1,5 @@
+'- Make sure all traces have monotonically increasing timestamp'
+'- '
 import os
 import sys
 import datetime
@@ -31,6 +33,10 @@ def getTraceGroundTruth(fileName):
     return groundTruth
 
 
+'1. Keep the segment which has the correct groundtruth'
+'2. Remove the first 2 mins'
+'3. Split traces if timestamp has a gap'
+'4. Split traces into 15mins chuncks'
 def getTraceIndexPairs(accelFilePath):
 	traceGT = getTraceGroundTruth(accelFilePath)
 	cleanTraceIndexPairs = [] # trace with correct groundtruth
@@ -40,7 +46,7 @@ def getTraceIndexPairs(accelFilePath):
 	content = accelFile.readlines()
 	
 	
-	# get clean trace segments (might still have time jumps)
+	# get clean trace segments (might still have time gaps)
 	pairDict = {}
 	prevGT = -1
 	for i in range(len(content)):
@@ -67,7 +73,8 @@ def getTraceIndexPairs(accelFilePath):
 		cleanTraceIndexPairs.append(pairDict)
 
 	cleanTraceIndexPairs.sort(key=operator.itemgetter('startIndex'))
-	## cut the first 2mins
+
+	## cut the first 2mins of the first segment
 	CUT_OF_TIME = 2 * 60 * 1000
 	startTime = cleanTraceIndexPairs[0]['startTime']
 	if cleanTraceIndexPairs[0]['endTime'] - cleanTraceIndexPairs[0]['startTime'] >= CUT_OF_TIME:
@@ -141,6 +148,7 @@ def getSensorFromFileName(fName):
 		sensor = "Geo Loc"
 	return sensor
 
+'Generate the folders according to the pairDict'
 def createCleanTraces(tracePath, destPath, pairDict):
 
 	pathSeg = tracePath.split("/")
