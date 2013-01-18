@@ -1,3 +1,5 @@
+'Divide traces into x folds, and each fold has approximately the same length.'
+'This code brutely enumerates all the combination of traces. Super slow.'
 from itertools import combinations
 import os
 import sys
@@ -121,7 +123,6 @@ def genFolds(fold_num, target_length, traceDict,delta,dest_root):
 			os.makedirs(dest_root+"/"+ folder + "/d")
 	
 	for activity in traceDict:
-		
 		trace_num = len(traceDict[activity])
 
 		possible_trace_comb = []
