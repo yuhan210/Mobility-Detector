@@ -1,6 +1,6 @@
 #! /usr/bin/python 
 '''
-It outputs the feature vectors for the specified folder in the .arff file format.
+It generates the feature file for the specified folder
 '''
 import sys
 from train import *
@@ -10,11 +10,12 @@ if __name__ == "__main__" :
 	if ( len(sys.argv) < 4 ) :
 		print "Usage: ",sys.argv[0]," path_to_data folder_num output_arff_name"
 		exit(5)
+
 	path_to_data=sys.argv[1]
 	folder_num=sys.argv[2]
 	arff_filename=sys.argv[3]
-	
 	arff_file = open(arff_filename,"w")
+
 	#arff_file.write('@RELATION mode\n\n')
 	#arff_file.write('@ATTRIBUTE speed NUMERIC\n')
 	#arff_file.write('@ATTRIBUTE var NUMERIC\n')
@@ -25,13 +26,16 @@ if __name__ == "__main__" :
 	#arff_file.write('\n@DATA\n')
 	
 	''' Initialize phone object '''
-	
 	activity_listing = os.listdir(path_to_data+"/"+folder_num)
 	for activity in activity_listing:
 		trace_listing = os.listdir(path_to_data+"/"+folder_num+"/"+activity)
 		for trace in trace_listing:
-			trace_path = path_to_data +"/"+ folder_num + "/"+ activity + "/" + trace
+			sim_phone = None
+			trainer = None
+
+			trace_path = path_to_data+"/"+folder_num+"/"+activity+"/"+trace
 			print trace_path
+			
 			sensor_files = os.listdir(trace_path)
 			dummy_file = "./dummy_file"
 			accel_trace = dummy_file
@@ -45,9 +49,13 @@ if __name__ == "__main__" :
 					accel_trace = trace_path +"/"+ sensor_file
 				elif sensor_file.find("GPS") >= 0:
 					gps_trace = trace_path +"/"+ sensor_file
-			
-			sim_phone = None
-			trainer= None
+				elif sensor_file.find("Wifi") >= 0:
+					wifi_trace = trace_path +"/"+ sensor_file
+				elif sensor_file.find("Geo") >= 0:
+					nwk_loc_trace = trace_path +"/"+ sensor_file
+				elif sensor_file.find("GSM") >= 0:
+					gsm_trace = trace_path +"/"+ sensor_file
+					
 			sim_phone=Phone(accel_trace,wifi_trace,gps_trace,gsm_trace,nwk_loc_trace)
 			''' Initialize classifier object '''
 			trainer=Train(sim_phone,arff_file)

@@ -5,11 +5,11 @@ from distributions import *
 import sys
 class Phone(object) :
 	''' sampling interval defaults in milliseconds '''
-	accel_interval=1000
-	wifi_interval=1000
-	gps_interval=1000
-	gsm_interval=1000
-	nwk_loc_interval=1000
+	accel_interval=0
+	wifi_interval=0
+	gps_interval=0
+	gsm_interval=0
+	nwk_loc_interval=0
 	
 	''' current time on trace '''
 	current_time=0
@@ -60,10 +60,10 @@ class Phone(object) :
 		self.gsm_list=[]
 		self.nwk_loc_list=[]
 		self.read_accel_trace()
-		#self.read_wifi_trace()
+		self.read_wifi_trace()
 		self.read_gps_trace()
-		#self.read_gsm_trace()
-		#self.read_nwk_loc_trace()
+		self.read_gsm_trace()
+		self.read_nwk_loc_trace()
 		''' Sort event list using timestamp as key;TODO: Fix invalid timestamps '''
 		self.event_list=self.accel_list+self.wifi_list+self.gps_list+self.gsm_list+self.nwk_loc_list;
 		self.event_list.sort(key=lambda x : x.time_stamp) 
@@ -134,7 +134,7 @@ class Phone(object) :
 				ap_name=wifi_scan_data.split('|')[2]
 				bss_list=[]
 				rssi_list=[]
-				if (ap_name != 'null') : # invalid AP
+				if (ap_name != 'null') and (ap_name.index(':') >= 0) : # invalid AP
 					bss_list =[ap_name]
 					rssi_list=[int(wifi_scan_data.split('|')[3])]
 				for i in range(0,num_aps) :
@@ -145,7 +145,7 @@ class Phone(object) :
 						continue
 					''' Modified '''
 					ap_name=next_ap_data[1];
-					if (ap_name!='null') : # invalid AP
+					if (ap_name!='null') and (ap_name.index(':') >= 0): # invalid AP
 						bss_list+=[ap_name];
 						rssi_list+=[int(next_ap_data[2])];
 				assert(len(bss_list)==len(rssi_list))	
@@ -179,7 +179,8 @@ class Phone(object) :
 				rssi=int(gsm_scan_data.split('|')[2])
 				bs_list=[]
 				rssi_list=[]
-				if (rssi != 99) : # invalid RSSI
+				bs_name = gsm_scan_data.split('|')(0)
+				if (rssi != 99): # invalid RSSI
 					bs_list =[gsm_scan_data.split('|')[0]]
 					rssi_list=[rssi]
 				for i in range(0,num_bs) :
@@ -188,7 +189,7 @@ class Phone(object) :
 					if len(next_bs_data) < 3:
 						continue
 					rssi=int(next_bs_data[2])
-					if (rssi != 99) : # invalid RSSI
+					if (rssi != 99): # invalid RSSI
 						bs_list+=[next_bs_data[0]];
 						rssi_list+=[rssi];
 				assert(len(bs_list)==len(rssi_list))	
