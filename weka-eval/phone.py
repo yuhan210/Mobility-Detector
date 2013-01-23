@@ -5,11 +5,11 @@ from distributions import *
 import sys
 class Phone(object) :
 	''' sampling interval defaults in milliseconds '''
-	accel_interval=0
-	wifi_interval=0
-	gps_interval=0
-	gsm_interval=0
-	nwk_loc_interval=0
+	accel_interval = 0
+	wifi_interval = 30 * 1000
+	gps_interval = 30 * 1000
+	gsm_interval= 30 * 1000
+	nwk_loc_interval= 0
 	
 	''' current time on trace '''
 	current_time=0
@@ -168,7 +168,7 @@ class Phone(object) :
 	def read_gsm_trace (self) :
 		fh=open(self.gsm_trace,"r");
 		for line in fh.readlines() :
-			try :
+			try:
 				records=line.split(',')
 				time_stamp=int(float(records[1]))
 				gnd_truth=int(records[3].split('|')[5])
@@ -179,9 +179,9 @@ class Phone(object) :
 				rssi=int(gsm_scan_data.split('|')[2])
 				bs_list=[]
 				rssi_list=[]
-				bs_name = gsm_scan_data.split('|')(0)
+				bs_name = gsm_scan_data.split('|')[0]
 				if (rssi != 99): # invalid RSSI
-					bs_list =[gsm_scan_data.split('|')[0]]
+					bs_list =[bs_name]
 					rssi_list=[rssi]
 				for i in range(0,num_bs) :
 					next_bs_data=gsm_scan_data.split('|')[7+3*i:7+3*i+3]
@@ -192,6 +192,7 @@ class Phone(object) :
 					if (rssi != 99): # invalid RSSI
 						bs_list+=[next_bs_data[0]];
 						rssi_list+=[rssi];
+				
 				assert(len(bs_list)==len(rssi_list))	
 				self.gsm_list+=[GSM(bs_list,rssi_list,time_stamp,gnd_truth)]
 			except Exception :
