@@ -14,16 +14,11 @@ if __name__ == "__main__" :
 	path_to_data=sys.argv[1]
 	folder_num=sys.argv[2]
 	arff_filename=sys.argv[3]
-	arff_file = open(arff_filename,"w")
+	accel_arff_file = open(arff_filename+"_accel.arff","w")
+	gps_arff_file = open(arff_filename+"_gps.arff","w")
+	wifi_arff_file = open(arff_filename+"_wifi.arff","w")
+	gsm_arff_file = open(arff_filename+"_gsm.arff","w")
 
-	#arff_file.write('@RELATION mode\n\n')
-	#arff_file.write('@ATTRIBUTE speed NUMERIC\n')
-	#arff_file.write('@ATTRIBUTE var NUMERIC\n')
-	#arff_file.write('@ATTRIBUTE 1hz NUMERIC\n')
-	#arff_file.write('@ATTRIBUTE 2hz NUMERIC\n')
-	#arff_file.write('@ATTRIBUTE 3hz NUMERIC\n')
-	#arff_file.write('@ATTRIBUTE gnd_truth {0,1,2,3,4}\n')
-	#arff_file.write('\n@DATA\n')
 	
 	''' Initialize phone object '''
 	activity_listing = os.listdir(path_to_data+"/"+folder_num)
@@ -58,8 +53,11 @@ if __name__ == "__main__" :
 					
 			sim_phone=Phone(accel_trace,wifi_trace,gps_trace,gsm_trace,nwk_loc_trace)
 			''' Initialize classifier object '''
-			trainer=Train(sim_phone,arff_file)
+			trainer=Train(sim_phone,accel_arff_file,gps_arff_file,wifi_arff_file,gsm_arff_file)
 			''' Now, train it ''' 
 			sim_phone.run_trainer(trainer)
 	''' Output classifier '''
-	arff_file.close()
+	accel_arff_file.close()
+	gps_arff_file.close()
+	wifi_arff_file.close()
+	gsm_arff_file.close()
