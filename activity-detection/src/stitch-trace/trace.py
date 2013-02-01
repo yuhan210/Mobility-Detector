@@ -26,7 +26,7 @@ class Trace(object) :
 
 	def rewrite_trace_file(self,start,end):
 		time_written_out=start
-		print "start of new activity is ",start, " and end is ",end
+		print "start of new activity is ",start, " and end is ",end, "length:", (end-start)/(60 * 1000 *1.0) ,"mins", "trace length:",self.calc_length()/(60 * 1000 * 1.0)
 		while ( time_written_out < end ) :
 			''' write out the list to a file in epochs until exhausted '''
 			epoch_start=time_written_out
