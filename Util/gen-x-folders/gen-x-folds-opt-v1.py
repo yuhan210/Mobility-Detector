@@ -5,7 +5,7 @@ import os
 import sys
 import shutil
 import math
-
+import distutils.dir_util
 def getTimeStamp(s):
         sSeg = s.split(",")
         timeSeg = sSeg[1].split(".")
@@ -29,7 +29,6 @@ def getTraceLength(filePath, traceGT): # return trace length in seconds
         curTime = getTimeStamp(content[i])
         prevGT = getCurGroundTruth(content[i-1])
         curGT =getCurGroundTruth(content[i])
-
         if prevGT == traceGT and curGT == traceGT and curTime > prevTime :
             totalLength += (curTime - prevTime)
 	
@@ -148,13 +147,13 @@ def genFoldsOpt(fold_num, target_length, traceDict, delta, dest_root):
 	for activity in traceDict:
 		sorted_file_pair = sorted(traceDict[activity], key=lambda x:x['length'], reverse=True)	
 		for i in xrange(fold_num):
-			print "deal with activitiy:", getActivity(activity), "folder:", (i+1)
+			print "dealing with activitiy:", getActivity(activity), "folder:", (i+1)
 			cur_total_time = 0
 			set_counter = 0
-			while(cur_total_time < lower_bound):
+			while((cur_total_time < lower_bound) and (len(sorted_file_pair) > 0)):
 				# start picking the trace
 				ratio = (set_counter % total_set_num)/ (total_set_num * 1.0)
-				index = int(ratio * len(sorted_file_pair))
+				index = int(math.floor(ratio * len(sorted_file_pair)))
 				print 'cur_length', cur_total_time,'ratio', ratio ,'index',index,'possible trace num', len(sorted_file_pair)
 
 				if (sorted_file_pair[index]['length'] + cur_total_time) > upper_bound:
@@ -170,7 +169,10 @@ def genFoldsOpt(fold_num, target_length, traceDict, delta, dest_root):
 					new_file_name = closest_pair['path'].split("/")[-1]
 					activity_dir = getActivity(activity)
 					print 'last',dest_root+"/"+str(i+1)+"/"+activity_dir+"/"+new_file_name
-					shutil.copytree(closest_pair['path'], dest_root+"/"+str(i+1)+"/"+activity_dir+"/"+ new_file_name)
+					src_path = closest_pair['path']
+					dst_path = dest_root+"/"+str(i+1)+"/"+activity_dir+"/"+new_file_name
+					distutils.dir_util.copy_tree(src_path,dst_path)
+
 						##
 					cur_total_time += closest_pair['length']
 					sorted_file_pair.remove(closest_pair)
@@ -185,7 +187,11 @@ def genFoldsOpt(fold_num, target_length, traceDict, delta, dest_root):
 					new_file_name = trace['path'].split("/")[-1]
 					activity_dir = getActivity(activity)
 					print 'normal',dest_root+"/"+str(i+1)+"/"+activity_dir+"/"+new_file_name
-					shutil.copytree(trace['path'], dest_root+"/"+str(i+1)+"/"+activity_dir+"/"+ new_file_name)
+					src_path = trace['path']
+					dst_path = dest_root+"/"+str(i+1)+"/"+activity_dir+"/"+new_file_name
+					distutils.dir_util.copy_tree(src_path,dst_path)
+					
+					#shutil.copytree(trace['path'], dest_root+"/"+str(i+1)+"/"+activity_dir+"/"+ new_file_name)
 					##
 					
 					cur_total_time += trace['length']
@@ -225,7 +231,7 @@ if __name__ == "__main__":
 	activity_total_length.sort()
 	print activity_total_length
 	activity_length_for_each_folder =  activity_total_length[0]/(fold_num * 1.0)
-	
+	print "the length of each activity within one folder", activity_length_for_each_folder	
 	genFoldsOpt(fold_num, activity_length_for_each_folder, traceDict, delta, dest_path)
 	#print activity_total_length	
 	
