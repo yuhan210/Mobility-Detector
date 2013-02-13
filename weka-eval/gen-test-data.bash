@@ -20,7 +20,7 @@ do
 	fi
 done
 #echo $str
-cat $str > $data_root/$leave_fold_num/${leave_fold_num}_train_filtered.arff
+#cat $str > $data_root/$leave_fold_num/${leave_fold_num}_train_filtered.arff
 #cat $accel > $dest_path/test_accel.out
 #cat $gps > $dest_path/test_gps.out
 #cat $wifi > $dest_path/wifi.out

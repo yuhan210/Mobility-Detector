@@ -3,22 +3,18 @@
 It generates the feature file for the specified folder
 '''
 import sys
-#from train import *
 from uclaTrain import *
 import os
 from phone import *
 if __name__ == "__main__" :
 	if ( len(sys.argv) < 4 ) :
-		print "Usage: ",sys.argv[0]," path_to_data folder_num output_arff_name"
+		print "Usage: ",sys.argv[0]," path_to_data folder_num arff_name"
 		exit(5)
 
 	path_to_data=sys.argv[1]
 	folder_num=sys.argv[2]
 	arff_filename=sys.argv[3]
-	accel_arff_file = open(arff_filename+"_accel.arff","w")
-	gps_arff_file = open(arff_filename+"_gps.arff","w")
-	wifi_arff_file = open(arff_filename+"_wifi.arff","w")
-	gsm_arff_file = open(arff_filename+"_gsm.arff","w")
+	arff_file = open(arff_filename,"w")
 
 	
 	''' Initialize phone object '''
@@ -54,11 +50,8 @@ if __name__ == "__main__" :
 					
 			sim_phone=Phone(accel_trace,wifi_trace,gps_trace,gsm_trace,nwk_loc_trace)
 			''' Initialize classifier object '''
-			trainer=Train(sim_phone,accel_arff_file,gps_arff_file,wifi_arff_file,gsm_arff_file)
+			trainer=uclaTrain(sim_phone,arff_file)
 			''' Now, train it ''' 
 			sim_phone.run_trainer(trainer)
 	''' Output classifier '''
-	accel_arff_file.close()
-	gps_arff_file.close()
-	wifi_arff_file.close()
-	gsm_arff_file.close()
+	arff_file.close()

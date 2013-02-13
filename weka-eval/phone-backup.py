@@ -1,14 +1,15 @@
 #! /usr/bin/python
 # class representing phone
 from sensors import *
+from distributions import *
 import sys
 class Phone(object) :
 	''' sampling interval defaults in milliseconds '''
-	accel_interval = 1
-	wifi_interval = 1
-	gps_interval = 1
-	gsm_interval= 1
-	nwk_loc_interval= 1
+	accel_interval = 0
+	wifi_interval = 30 * 1000
+	gps_interval =  1000
+	gsm_interval= 30 * 1000
+	nwk_loc_interval= 0
 	
 	''' current time on trace '''
 	current_time=0
@@ -17,18 +18,7 @@ class Phone(object) :
 	gnd_truth=[]
 
 	''' trace file names '''
-	accel_trace=""
-	wifi_trace=""
-	gps_trace=""
-	gsm_trace=""
-	nwk_loc_trace=""
-
-	''' sensor reading lists '''	
-	accel_list=[]
-	wifi_list=[]
-	gps_list=[]
-	gsm_list=[]
-	nwk_loc_list=[]
+	stitched_trace=""
 
 	''' next sensor timestamp (for downsampling) '''
 	next_accel_timestamp=-1
@@ -44,35 +34,17 @@ class Phone(object) :
 	gsm_sampling_intervals=[]
 	nwk_loc_sampling_intervals=[]
 
-	def __init__ (self,accel_trace,wifi_trace,gps_trace,gsm_trace,nwk_loc_trace) :
-		''' Populate trace file names '''
-		self.accel_trace=accel_trace
-		self.wifi_trace=wifi_trace
-		self.gps_trace=gps_trace
-		self.gsm_trace=gsm_trace
-		self.nwk_loc_trace=nwk_loc_trace
+	''' sensor_dict '''
+	sensor_dict=['Accel','Wifi','GPS','GSM','Geo Loc']
+
+	def __init__ (self, trace):
+		self.stitched_trace = trace
 		''' Read them into lists '''
 		self.event_list=[]
-		self.accel_list=[]
-		self.gps_list=[]
-		self.wifi_list=[]
-		self.gsm_list=[]
-		self.nwk_loc_list=[]
-		self.read_accel_trace()
-		self.read_wifi_trace()
-		self.read_gps_trace()
-		self.read_gsm_trace()
-		self.read_nwk_loc_trace()
-		''' Sort event list using timestamp as key;TODO: Fix invalid timestamps '''
-		self.event_list=self.accel_list+self.wifi_list+self.gps_list+self.gsm_list+self.nwk_loc_list;
-		self.event_list.sort(key=lambda x : x.time_stamp) 
+		self.read_trace()
+	
 		self.current_time=self.event_list[0].time_stamp
-		''' Populate next timestamps '''
-		self.next_accel_timestamp=self.accel_list[0].time_stamp if self.accel_list != [] else sys.float_info.max
-		self.next_wifi_timestamp=self.wifi_list[0].time_stamp if self.wifi_list != [] else sys.float_info.max
-		self.next_gps_timestamp=self.gps_list[0].time_stamp if self.gps_list != [] else sys.float_info.max
-		self.next_gsm_timestamp=self.gsm_list[0].time_stamp if self.gsm_list != [] else sys.float_info.max
-		self.next_nwk_loc_timestamp=self.nwk_loc_list[0].time_stamp if self.nwk_loc_list != [] else sys.float_info.max
+		
 	''' Methods to change sampling interval '''
 	def change_accel_interval(self,accel_interval):
 		if( self.accel_interval == accel_interval ) :
@@ -107,111 +79,109 @@ class Phone(object) :
 
 
 	''' File handling routines '''
-	def read_accel_trace (self) :
-		fh=open(self.accel_trace,"r");
-		for line in fh.readlines() :
-			records=line.split(',')
-			try :
-				time_stamp=int(float(records[1]))
-				gnd_truth=int(records[3].split('|')[3])
-				accel_reading=Accel(float(records[3].split('|')[0]),float(records[3].split('|')[1]),float(records[3].split('|')[2]),time_stamp,gnd_truth)
-				self.accel_list+=[accel_reading]
-			except Exception :
-				continue
-			
-	def read_wifi_trace (self) :
-		fh=open(self.wifi_trace,"r");
-		for line in fh.readlines() :
-			try :
+	def read_trace(self):
+		fh=open(self.stitched_trace,"r")
+		for line in fh.readlines():
+			sensor_type=self.sensor_dict.index(line.split(',')[2])	
+		
+			if sensor_type == 0:
 				records=line.split(',')
-				time_stamp=int(float(records[1]))
-				gnd_truth=int(records[3].split('|')[5])
-				wifi_scan_data=records[3]
-				''' determine number of APs '''
-				num_aps=int(wifi_scan_data.split('|')[4])
-				i=0
-				ap_name=wifi_scan_data.split('|')[2]
-				rssi = int(wifi_scan_data.split('|')[3])
-				bss_list=[]
-				rssi_list=[]
-				if (ap_name != 'null') and (ap_name.index(':') >= 0) and (rssi <= 0 and rssi >= -80)  : # invalid AP
-					bss_list =[ap_name]
-					rssi_list=[int(wifi_scan_data.split('|')[3])]
-				for i in range(0,num_aps) :
-					next_ap_data=wifi_scan_data.split('|')[6+4*i:6+4*i+4]
+				try :
+					time_stamp=int(float(records[1]))
+					gnd_truth=int(records[3].split('|')[3])
+					accel_reading=Accel(float(records[3].split('|')[0]),float(records[3].split('|')[1]),float(records[3].split('|')[2]),time_stamp,gnd_truth)
+					self.event_list+=[accel_reading]
+					self.next_accel_timestamp = time_stamp if self.next_accel_timestamp == -1 else self.next_accel_timestamp
+				except Exception :
+					continue
+			elif sensor_type == 1:
+				try :
+					records=line.split(',')
+					time_stamp=int(float(records[1]))
+					gnd_truth=int(records[3].split('|')[5])
+					wifi_scan_data=records[3]
+					''' determine number of APs '''
+					num_aps=int(wifi_scan_data.split('|')[4])
+					i=0
+					ap_name=wifi_scan_data.split('|')[2]
+					rssi = int(wifi_scan_data.split('|')[3])
+					bss_list=[]
+					rssi_list=[]
+					if (ap_name != 'null') and (ap_name.index(':') >= 0) and (rssi <= 0 and rssi >= -80)  : # invalid AP
+						bss_list =[ap_name]
+						rssi_list=[int(wifi_scan_data.split('|')[3])]
+					for i in range(0,num_aps) :
+						next_ap_data=wifi_scan_data.split('|')[6+4*i:6+4*i+4]
 					
-					''' Modified '''
-					if len(next_ap_data) < 2:
-						continue
-					''' Modified '''
-					ap_name=next_ap_data[1];
-					rssi = int(next_ap_data[2])
-					if (ap_name!='null') and (ap_name.index(':') >= 0) and (rssi <= 0 and rssi >= -80): # invalid AP
-						bss_list+=[ap_name];
-						rssi_list+=[int(next_ap_data[2])];
-				assert(len(bss_list)==len(rssi_list))	
-				self.wifi_list+=[WiFi(bss_list,rssi_list,time_stamp,gnd_truth)]
-			except Exception :
-				continue
-			
-	def read_gps_trace (self) :
-		fh=open(self.gps_trace,"r");
-		for line in fh.readlines() :
-			try :
-				records=line.split(',')
-				time_stamp=int(float(records[1]))
-				gnd_truth=int(records[3].split('|')[8])
-				gps_reading=GPS(float(records[3].split('|')[2]),float(records[3].split('|')[3]),time_stamp,gnd_truth, float(records[3].split('|')[6]))
-				self.gps_list+=[gps_reading]
+						if len(next_ap_data) < 2:
+							continue
+						ap_name=next_ap_data[1];
+						rssi = int(next_ap_data[2])
+						if (ap_name!='null') and (ap_name.index(':') >= 0) and (rssi <= 0 and rssi >= -80): # invalid AP
+							bss_list+=[ap_name];
+							rssi_list+=[int(next_ap_data[2])];
+					assert(len(bss_list)==len(rssi_list))	
 
-			except Exception :
-				continue
-	def read_gsm_trace (self) :
-		fh=open(self.gsm_trace,"r");
-		for line in fh.readlines() :
-			try:
-				records=line.split(',')
-				time_stamp=int(float(records[1]))
-				gnd_truth=int(records[3].split('|')[5])
-				gsm_scan_data=records[3]
-				''' determine number of Base Stations '''
-				num_bs=int(gsm_scan_data.split('|')[6])
-				i=0
-				rssi=int(gsm_scan_data.split('|')[2])
-				bs_list=[]
-				rssi_list=[]
-				bs_name = gsm_scan_data.split('|')[0]
-				if (rssi != 99): # invalid RSSI
-					bs_list =[bs_name]
-					rssi_list=[rssi]
-				for i in range(0,num_bs) :
-					next_bs_data=gsm_scan_data.split('|')[7+3*i:7+3*i+3]
-					''' Modified '''
-					if len(next_bs_data) < 3:
-						continue
-					rssi=int(next_bs_data[2])
+					wifi_reading = WiFi(bss_list,rssi_list,time_stamp,gnd_truth)
+					self.event_list+=[wifi_reading]
+					self.next_wifi_timestamp = time_stamp if self.next_wifi_timestamp == -1 else self.next_wifi_timestamp
+
+				except Exception :
+					continue
+			elif sensor_type == 2:
+				try :
+					records=line.split(',')
+					time_stamp=int(float(records[1]))
+					gnd_truth=int(records[3].split('|')[8])
+					gps_reading=GPS(float(records[3].split('|')[2]),float(records[3].split('|')[3]),time_stamp,gnd_truth, float(records[3].split('|')[6]))
+					self.event_list+=[gps_reading]
+					self.next_gps_timestamp = time_stamp if self.next_gps_timestamp == -1 else self.next_gps_timestamp
+				except Exception :
+					continue
+			elif sensor_type == 3:
+				try:
+					records=line.split(',')
+					time_stamp=int(float(records[1]))
+					gnd_truth=int(records[3].split('|')[5])
+					gsm_scan_data=records[3]
+					''' determine number of Base Stations '''
+					num_bs=int(gsm_scan_data.split('|')[6])
+					i=0
+					rssi=int(gsm_scan_data.split('|')[2])
+					bs_list=[]
+					rssi_list=[]
+					bs_name = gsm_scan_data.split('|')[0]
 					if (rssi != 99): # invalid RSSI
-						bs_list+=[next_bs_data[0]];
-						rssi_list+=[rssi];
+						bs_list =[bs_name]
+						rssi_list=[rssi]
+					for i in range(0,num_bs) :
+						next_bs_data=gsm_scan_data.split('|')[7+3*i:7+3*i+3]
+						if len(next_bs_data) < 3:
+							continue
+						rssi=int(next_bs_data[2])
+						if (rssi != 99): # invalid RSSI
+							bs_list+=[next_bs_data[0]];
+							rssi_list+=[rssi];
 				
-				assert(len(bs_list)==len(rssi_list))	
-				self.gsm_list+=[GSM(bs_list,rssi_list,time_stamp,gnd_truth)]
-			except Exception :
-				continue
-	''' TODO Data format changed before May 2012. Now, the after May 2012 format is implemented '''
-
-	def read_nwk_loc_trace (self) :
-		fh=open(self.nwk_loc_trace,"r");
-		for line in fh.readlines() :
-			try :
-				records=line.split(',')
-				time_stamp=int(float(records[1]))
-				gnd_truth=int(records[3].split('|')[8])
-				nwk_loc_reading=NwkLoc(float(records[3].split('|')[2]),float(records[3].split('|')[3]),time_stamp,gnd_truth)
-				self.nwk_loc_list+=[nwk_loc_reading]
-
-			except Exception :
-				continue
+					assert(len(bs_list)==len(rssi_list))	
+					gsm_reading = GSM(bs_list,rssi_list,time_stamp,gnd_truth)
+					self.event_list+=[gsm_reading]
+					self.next_gsm_timestamp = time_stamp if self.next_gsm_timestamp == -1 else self.next_gsm_timestamp
+				except Exception :
+					continue
+			elif sensor_type == 4:
+				try :
+					records=line.split(',')
+					time_stamp=int(float(records[1]))
+					gnd_truth=int(records[3].split('|')[8])
+					nwk_loc_reading=NwkLoc(float(records[3].split('|')[2]),float(records[3].split('|')[3]),time_stamp,gnd_truth)
+					self.event_list+=[nwk_loc_reading]
+					self.next_nwk_loc_timestamp = time_stamp if self.next_nwk_loc_timestamp == -1 else self.next_nwk_loc_timestamp
+				except Exception :
+					continue
+			else:
+				print "Unknown sensor", line.split(',')[2]
+				exit(5)
 	def run_classifier(self,classifier) :
 		# main event loop of trace driven simulation
 		''' Write into sampling rate vectors before starting '''
@@ -225,9 +195,10 @@ class Phone(object) :
 		while (self.event_list != [] ) :
 			current_event=self.event_list.pop(0)
 			result=self.subsample(current_event);
-			pmf=[0]*5 	# probability dist of ground truth
-			pmf[current_event.gnd_truth]=1
-			self.gnd_truth+=[(current_event.time_stamp,Distribution(len(pmf),pmf))];
+			#pmf=[0]*5 	# probability dist of ground truth
+			#pmf[current_event.gnd_truth]=1
+			#self.gnd_truth+=[(current_event.time_stamp,Distribution(len(pmf),pmf))];
+			self.gnd_truth+=[(current_event.time_stamp,current_event.gnd_truth)]
 			if (result) :
 				''' call back classifier '''
 				classifier.callback(current_event,current_event.time_stamp)

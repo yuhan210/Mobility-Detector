@@ -1,7 +1,7 @@
 
 #! /usr/bin/python
 
-
+from math import *
 class Location(object):
 
 	latitude = 0
@@ -12,6 +12,8 @@ class Location(object):
 		self.longitude = lon
 		self.canonicalize()
 
+	def __str__(self):
+		return 'lat:'+ str(self.latitude) +"\tlon:"+str(self.longitude)
 	def canonicalize(self):
 		self.latitude = (self.latitude + 180) % 360.0
 		if (self.latitude < 0):
@@ -120,10 +122,10 @@ class Location(object):
 			else:
 				change = abs((lambda_v-lambda0)/lambda_v)
 
-			if (i > 1) and change < 0.0000000000001:
+			if (i > 1) and change < 0.000001:
 				converged = 1
 				break
 			s = b * A * (sigma - deltasigma)
-			print "distance", s 
+			#print "distance", s 
 
 			return s
