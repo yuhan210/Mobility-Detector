@@ -14,12 +14,13 @@ class Stats(object) :
 	power_wifi=dict()
 	power_gps=dict()
 	power_gsm=dict()
-	power_nwk_loc=dict()
+	#power_nwk_loc=dict()
 	def __init__ (self,gnd_truth,classifier_output,sensor_sampling_intervals,power_model,callback_list) :
 		self.gnd_truth=gnd_truth
 		self.classifier_output=classifier_output
 		self.sampling_intervals=sensor_sampling_intervals
 		self.callback_list=callback_list
+		execfile(power_model)
 
 	def match(self,match_type='hard'):	# compute hard metric between the two lists
 		# compute bins for both lists
@@ -27,14 +28,23 @@ class Stats(object) :
 		output_bins   =self.discretise_time_series(self.classifier_output)
 		total_bins=0
 		correct_bins=0
-		for current_bin in gnd_truth_bins :
-			if (current_bin in output_bins) :
+		#confusion_matrix = [[0 for i in xrange(6)] for j in xrange(6)]
+		for current_bin in gnd_truth_bins:
+			if (current_bin in output_bins):
+				
+				
 				merged_gnd_truth_bins = self.merge_not_interested_state(gnd_truth_bins[current_bin])
 				merged_output_bins    = self.merge_not_interested_state(output_bins[current_bin])
 				if  (set(merged_output_bins).issubset(set(merged_gnd_truth_bins))) and ( merged_output_bins != [] ) and ( merged_gnd_truth_bins != [] ):
 					correct_bins+=1
 			total_bins+=1
-		print correct_bins
+
+		#print confusion_matrix
+		#for activity in xrange(6):
+		#	sum_pred = sum(confusion_matrix[activity])
+		#	for pred in xrange(6):
+		#		confusion_matrix[activity][pred] = float(confusion_matrix[activity][pred])/sum_pred
+		
 		return float(correct_bins) / (total_bins)
 	
 	def merge_not_interested_state(self, state_list):
@@ -47,7 +57,7 @@ class Stats(object) :
 				merged_state_list.append(useless_state)
 		return merged_state_list
 
-	def match(self, match_type='event'):#TODO: adapt to different kinds of callbacks
+	def event_match(self, match_type='event'):#TODO: adapt to different kinds of callbacks
 		gnd_truth_event=self.eventize_time_series(self.gnd_truth)
 		output_event   =self.eventize_time_series(self.classifier_output)
 		detected_event_tp = 0
@@ -58,13 +68,14 @@ class Stats(object) :
 			event = gnd_truth_event[i][1]
 
 			if i == (len(gnd_truth_event) - 1):
-				end_time = gnd_truth_event[i+1][0]
-			else:
 				end_time = sys.maxint
+			else:
+				end_time = gnd_truth_event[i+1][0]
 
 			
-			candidate_match = filter(lambda x: x[0] >= start_time and x[0] < end_time and x[1] == event, output_event).sort(key = lambda x:x[0])
-			if candidate_match == None : # you miss the event :(
+			candidate_match = filter(lambda x: x[0] >= start_time and x[0] < end_time and x[1] == event, output_event)
+			candidate_match.sort(key = lambda x:x[0])
+			if candidate_match == None or len(candidate_match) == 0: # you miss the event :(
 				missed_event_fn += 1
 			else:
 				detected_event_tp += 1
@@ -96,7 +107,7 @@ class Stats(object) :
 		wifi_sampling_intervals   =self.sampling_intervals[1]
 		gps_sampling_intervals    =self.sampling_intervals[2]
 		gsm_sampling_intervals    =self.sampling_intervals[3]
-		nwk_loc_sampling_intervals=self.sampling_intervals[4]
+		#nwk_loc_sampling_intervals=self.sampling_intervals[4]
 		energy=0
 		for i in range(0,len(accel_sampling_intervals)-1) :
 			energy+=self.power_accel[accel_sampling_intervals[i][1]]*(accel_sampling_intervals[i+1][0]-accel_sampling_intervals[i][0])
@@ -106,8 +117,8 @@ class Stats(object) :
 			energy+=self.power_gps[gps_sampling_intervals[i][1]]*(gps_sampling_intervals[i+1][0]-gps_sampling_intervals[i][0])
 		for i in range(0,len(gsm_sampling_intervals)-1) :
 			energy+=self.power_gsm[gsm_sampling_intervals[i][1]]*(gsm_sampling_intervals[i+1][0]-gsm_sampling_intervals[i][0])
-		for i in range(0,len(nwk_loc_sampling_intervals)-1) :
-			energy+=self.power_nwk_loc[nwk_loc_sampling_intervals[i][1]]*(nwk_loc_sampling_intervals[i+1][0]-nwk_loc_sampling_intervals[i][0])
+		#for i in range(0,len(nwk_loc_sampling_intervals)-1) :
+		#	energy+=self.power_nwk_loc[nwk_loc_sampling_intervals[i][1]]*(nwk_loc_sampling_intervals[i+1][0]-nwk_loc_sampling_intervals[i][0])
 		return energy	
 
 	def eventize_time_series(self, time_series):
@@ -120,7 +131,8 @@ class Stats(object) :
 			
 			if activity_estimate != prev_event:
 				event_series += [pair]
-				prev_enet = event_series
+				prev_event = activity_estimate
+
 			
 		event_series.sort(key=lambda x:x[0])
 		return event_series

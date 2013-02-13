@@ -1,0 +1,219 @@
+fold 1
+== bin-based ==
+avefv:0.686
+avefv+ewma:0.688
+avefv+hmm:0.66
+
+== event-based ==
+avefv
+recall:0.685714285714
+precision:0.170212765957
+latency:11126.75
+
+avefv+ewma
+recall:0.628571428571
+precision:0.354838709677
+latency:14865.3636364
+
+avefv+hmm
+recall:0.657142857143
+precision:0.247311827957
+latency:14219.0434783
+
+fold 2
+== bin-based ==
+avefv:0.702
+avefv+ewma:0.65
+avefv+hmm:0.688
+
+== event-based ==
+avefv
+recall:0.666666666667
+precision:0.354838709677
+latency:2757.5
+
+avefv+ewma
+recall:0.545454545455
+precision:0.6
+latency:13369.9444444
+
+avefv+hmm
+recall:0.606060606061
+precision:0.425531914894
+latency:3033.25
+
+fold 3
+== bin-based ==
+avefv:0.742
+avefv+ewma:0.69
+avefv+hmm:0.716
+
+== event-based ==
+avefv
+recall:0.818181818182
+precision:0.284210526316
+latency:3223.74074074
+
+avefv+ewma
+recall:0.575757575758
+precision:0.558823529412
+latency:10897.9473684
+
+avefv+hmm
+recall:0.787878787879
+precision:0.342105263158
+latency:3347.73076923
+
+fold 4
+== bin-based ==
+avefv:0.768
+avefv+ewma:0.704
+avefv+hmm:0.742
+
+== event-based ==
+avefv
+recall:0.878787878788
+precision:0.28431372549
+latency:25759.862069
+
+avefv+ewma
+recall:0.636363636364
+precision:0.396226415094
+latency:8603.04761905
+
+avefv+hmm
+recall:0.848484848485
+precision:0.318181818182
+latency:2166.21428571
+
+fold 5
+== bin-based ==
+avefv:0.814
+avefv+ewma:0.79
+avefv+hmm:0.81
+
+== event-based ==
+avefv
+recall:0.909090909091
+precision:0.265486725664
+latency:901.433333333
+
+avefv+ewma
+recall:0.727272727273
+precision:0.615384615385
+latency:8626.70833333
+
+avefv+hmm
+recall:0.878787878788
+precision:0.325842696629
+latency:3001.48275862
+
+fold 6
+== bin-based ==
+avefv:0.772
+avefv+ewma:0.704
+avefv+hmm:0.758
+
+== event-based ==
+avefv
+recall:0.969696969697
+precision:0.313725490196
+latency:2719.9375
+
+avefv+ewma
+recall:0.666666666667
+precision:0.55
+latency:9411.04545455
+
+avefv+hmm
+recall:0.909090909091
+precision:0.352941176471
+latency:2901.26666667
+
+fold 7
+== bin-based ==
+avefv:0.862
+avefv+ewma:0.804
+avefv+hmm:0.86
+
+== event-based ==
+avefv
+recall:0.939393939394
+precision:0.352272727273
+latency:872.258064516
+
+avefv+ewma
+recall:0.727272727273
+precision:0.705882352941
+latency:8626.54166667
+
+avefv+hmm
+recall:0.909090909091
+precision:0.454545454545
+latency:2901.33333333
+
+fold 8
+== bin-based ==
+avefv:0.886
+avefv+ewma:0.836
+avefv+hmm:0.872
+
+== event-based ==
+avefv
+recall:0.848484848485
+precision:0.363636363636
+latency:965.857142857
+
+avefv+ewma
+recall:0.727272727273
+precision:0.705882352941
+latency:8626.54166667
+
+avefv+hmm
+recall:0.848484848485
+precision:0.388888888889
+latency:3108.89285714
+
+fold 9
+== bin-based ==
+avefv:0.748
+avefv+ewma:0.684
+avefv+hmm:0.748
+
+== event-based ==
+avefv
+recall:0.72972972973
+precision:0.284210526316
+latency:3223.44444444
+
+avefv+ewma
+recall:0.540540540541
+precision:0.555555555556
+latency:10351.95
+
+avefv+hmm
+recall:0.648648648649
+precision:0.363636363636
+latency:3626.375
+
+fold 10
+== bin-based ==
+avefv:0.714
+avefv+ewma:0.638
+avefv+hmm:0.678
+
+== event-based ==
+avefv
+recall:0.878787878788
+precision:0.22480620155
+latency:9208.17241379
+
+avefv+ewma
+recall:0.69696969697
+precision:0.522727272727
+latency:10464.6956522
+
+avefv+hmm
+recall:0.848484848485
+precision:0.358974358974
+latency:2166.39285714

@@ -1,8 +1,23 @@
 #! /bin/bash
 
-fold_num=$1
-seed_num=$2
-python ~/mobility-detector/src/Mobility-Detector/activity-detection/src/stitch-trace/stitch-traces.py 30000000 ~/mobility-detector/sensor-merged-4-fold/${fold_num}/s ~/mobility-detector/sensor-merged-4-fold/${fold_num}/w ~/mobility-detector/sensor-merged-4-fold/${fold_num}/r ~/mobility-detector/sensor-merged-4-fold/${fold_num}/b ~/mobility-detector/sensor-merged-4-fold/${fold_num}/d ${seed_num}
+seed_num=$1
+phone_model=$2
 
-mv stitched-trace.out stitched-trace-${seed_num}.out
+folds=( "1" "2" "3" "4")
+
+rm -rf /home/dept/ta/yuhan/stitched-traces/${phone_model}
+mkdir /home/dept/ta/yuhan/stitched-traces/${phone_model}
+for fold_num in "${folds[@]}"
+do
+
+	path="/home/dept/ta/yuhan/sensor-merged-4-fold/${phone_model}/${fold_num}"
+	dst_path="/home/dept/ta/yuhan/stitched-traces/${phone_model}/${fold_num}"
+	rm -rf ${dst_path}
+	mkdir ${dst_path}
+
+	echo ${path}
+	python ~/mobility-detector/src/Mobility-Detector/activity-detection/src/stitch-trace/stitch-traces.py 10800000 ${path}/s ${path}/w ${path}/r ${path}/b ${path}/d ${seed_num}
+	mv stitched-trace.out ${dst_path}/stitched-trace-${seed_num}.out
+
+done
 

@@ -2,10 +2,11 @@
 from decisionTree import *
 import sys
 import os
-lib_path = os.path.abspath('../lib')
+lib_path = os.path.abspath('/home/dept/ta/yuhan/mobility-detector/src/Mobility-Detector/activity-detection/src/lib')
 sys.path.append(lib_path)
 from math import *
 from numpy.fft import *
+from sensors import *
 import numpy
 import operator
 # classify based on traces
